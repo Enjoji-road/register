@@ -20,6 +20,9 @@
     .site-header{height:var(--header);position:sticky;top:0;z-index:30;background:rgba(245,245,238,.97);border-bottom:1px solid var(--line)}
     .header-inner{height:100%;max-width:760px;margin:auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
     .store-brand{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:750;letter-spacing:.02em;white-space:nowrap}
+    .master-switch{position:relative;border:0;background:transparent;padding:0;min-height:44px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+    .master-switch.is-holding:after{content:"";position:absolute;bottom:0;left:0;width:100%;height:3px;border-radius:3px;background:var(--green);transform-origin:left;animation:master-hold 3s linear forwards}
+    @keyframes master-hold{from{transform:scaleX(0)}to{transform:scaleX(1)}}
     .store-symbol{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--green);color:#fff}
     .header-actions{display:flex;gap:5px}
     .icon-button{position:relative;min-width:44px;min-height:44px;border:1px solid transparent;background:transparent;border-radius:12px;display:grid;place-items:center}
@@ -43,6 +46,8 @@
     .title-subtitle{font-size:15px;line-height:1.9;margin:0 0 34px;color:var(--muted)}
     .title-content .primary{min-height:54px;width:100%}
     .title-content .quiet{margin-top:10px}
+    .title-content>.master-switch{display:block;margin:auto;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.12em}
+    .title-rule{font-size:12px;color:var(--muted);line-height:1.8;margin:-20px 0 27px}
     .mission{position:sticky;top:calc(var(--header) + 8px);z-index:20;background:#fffdf2;border:1px solid #e4e0c9;border-radius:15px;padding:17px 19px 18px;box-shadow:0 3px 12px rgba(45,63,43,.045);margin-bottom:26px}
     .mission-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
     .level-label{font-size:12px;color:#6c7056;letter-spacing:.06em;font-weight:700}
@@ -57,6 +62,7 @@
     .shelf-group h3{font-size:13px;font-weight:650;color:var(--muted);margin:0 0 10px;padding-left:2px}
     .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
     .product-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .product-grid.single{grid-template-columns:minmax(0,1fr);max-width:240px}
     .product-card{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--paper);padding:17px 8px 12px;box-shadow:0 3px 0 #e7eade;transition:background .12s,border-color .12s}
     .product-card:hover{background:#f9fcf6}
     .product-card[aria-pressed="true"]{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green),0 3px 0 #d9e3d5;background:#edf3e8}
@@ -106,6 +112,26 @@
     .register-product{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
     .register-tag{display:inline-flex;align-items:baseline;gap:5px;padding:3px 7px;border-radius:5px;background:#f1eee1;font-size:11px;color:var(--muted);white-space:nowrap}
     .register-tag strong{font-size:14px;color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+    .name-label{width:100%;min-width:0}
+    .name-input{font:inherit;font-size:18px;line-height:1.5;width:100%;min-width:0;min-height:46px;color:var(--ink);background:white;border:1px solid #aabbaa;border-radius:8px;padding:7px 8px}
+    .access-panel{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;border:1px solid var(--line);border-radius:10px;background:#edf0e8;padding:12px 14px;margin-bottom:17px;font-size:13px}
+    .access-status{color:var(--muted);font-size:11px}
+    .access-status.active{color:var(--green);font-weight:700}
+    .register-tools{display:flex;justify-content:flex-end;margin-top:10px}
+    .register-tools button{font-size:12px;padding:8px 12px}
+    .notice-link{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 15px;margin:-6px 0 22px;border:1px solid var(--line);border-radius:10px;background:#edf0e8;font-size:13px;text-align:left;min-height:46px}
+    .notice-link span:last-child{color:var(--muted)}
+    .settings-status{margin:0 0 10px;color:var(--muted);font-size:12px}
+    .info-body{padding:4px 22px 24px;overflow-y:auto;overscroll-behavior:contain;font-size:14px;line-height:1.9}
+    .info-body h3{font-size:16px;margin:0 0 12px}
+    .info-body p{margin:0 0 16px}
+    .info-sheet{border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:19px;margin:5px 0 17px}
+    .info-sheet:last-child{margin-bottom:0}
+    .info-sheet p:last-child{margin-bottom:0}
+    .info-sheet.work-note{background:#fff9e8;border-color:#e4dcc4}
+    .info-kicker{font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px}
+    .cake-art{position:relative;width:82px;height:57px;border:2px solid #b78c51;border-radius:45% 45% 38% 38%;background:#dfb678;box-shadow:inset 0 -9px 0 #c99558;margin:8px auto 21px}
+    .cake-art:after{content:"";position:absolute;top:9px;left:9px;right:9px;height:25px;border:1px solid #bd9152;border-radius:50%;background:#e8c991}
     .amount-field{display:flex;align-items:center;gap:8px;min-width:0}
     .amount-input{width:100%;min-width:0;min-height:52px;border:1px solid #aabbaa;border-radius:9px;background:white;color:var(--ink);font:inherit;font-size:22px;font-variant-numeric:tabular-nums;text-align:right;padding:8px 11px;scroll-margin-top:90px;scroll-margin-bottom:120px}
     .amount-field>span:last-child{font-size:13px;flex-shrink:0}
@@ -160,7 +186,7 @@
   <div id="app">
     <header class="site-header">
       <div class="header-inner">
-        <div class="store-brand"><span class="store-symbol" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v10h16V10M3 10l2-6h14l2 6M3 10c0 3 4 3 4 0 0 3 5 3 5 0 0 3 5 3 5 0 0 3 4 3 4 0M9 20v-6h6v6"/></svg></span>おつかいスーパー</div>
+        <button class="store-brand master-switch" data-master-switch type="button"><span class="store-symbol" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v10h16V10M3 10l2-6h14l2 6M3 10c0 3 4 3 4 0 0 3 5 3 5 0 0 3 5 3 5 0 0 3 4 3 4 0M9 20v-6h6v6"/></svg></span>おつかいスーパー</button>
         <div class="header-actions">
           <button class="icon-button" id="open-receipts" type="button" aria-label="レシート（0枚）"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l2 1 2-1 2 1 2-1 2 1 2-1v18l-2-1-2 1-2-1-2 1-2-1-2 1V3zM9 8h6M9 12h6M9 16h4"/></svg><span class="receipt-count" id="receipt-count" hidden>0</span></button>
           <button class="icon-button" id="open-settings" type="button" aria-label="メニュー"><svg aria-hidden="true" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 6h14M5 12h14M5 18h14"/></svg></button>
@@ -182,9 +208,19 @@
     <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
       <div class="modal-header"><h2 id="settings-title">メニュー</h2><button class="icon-button" type="button" data-close-modal aria-label="メニューを閉じる">✕</button></div>
       <div class="settings-body">
+        <p class="settings-status" id="master-status">権限：標準</p>
+        <button class="secondary" type="button" data-info="guide">レジの取扱案内</button>
+        <button class="secondary" type="button" data-info="board">店内の掲示</button>
+        <button class="secondary" type="button" data-info="terminal">端末情報</button>
         <button class="secondary" id="return-title" type="button">タイトルへ</button>
         <button class="secondary danger-button" id="reset-game" type="button">最初からやり直す</button>
       </div>
+    </section>
+  </div>
+  <div class="modal-layer" id="info-modal" hidden>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="info-title" tabindex="-1">
+      <div class="modal-header"><h2 id="info-title"></h2><button class="icon-button" type="button" data-close-modal aria-label="案内を閉じる">✕</button></div>
+      <div class="info-body" id="info-content"></div>
     </section>
   </div>
   <noscript><p style="padding:24px;text-align:center">おつかいを始めるには、ブラウザのJavaScriptを有効にしてください。</p></noscript>
@@ -193,6 +229,7 @@
     'use strict';
     const STORAGE_KEY = 'regi-r01-play-v1';
     const LEGACY_BACKUP_KEY = 'regi-r01-before-selfcheckout';
+    const MASTER_BACKUP_KEY = 'regi-r01-before-master';
     const QUESTIONS = [
       { level:1, money:500, memo:'青豆と小豆を1袋ずつ買ってきてね。',
         groups:[{name:'豆類',style:'beans',count:2,products:[{name:'青豆',price:300},{name:'小豆',price:200}]}] },
@@ -203,16 +240,21 @@
       { level:3, money:520, memo:'豆類を1つ、\nお茶を1つ買ってきてね。',
         groups:[{name:'豆類',style:'beans',count:1,products:[{name:'大豆',price:200},{name:'茶豆',price:320},{name:'青大豆',price:360}]},
           {name:'お茶',style:'tea',count:1,products:[{name:'麦茶',price:320},{name:'小豆茶',price:380},{name:'大豆茶',price:380}]}] },
-      { level:4, money:1000, memo:'納豆と番茶を1つずつ買ってきてね。',
-        groups:[{name:'豆類',style:'beans',count:1,products:[{name:'納豆',price:340}]},
-          {name:'お茶',style:'tea',count:1,products:[{name:'番茶',price:420}]}] }
+      { level:4, money:400, memo:'大判焼きを1つ買ってきてね。',
+        groups:[{name:'和菓子',style:'sweets',count:1,products:[{name:'大判焼き',price:440,aliases:{'大判焼き':440,'大判焼':440,'回転焼き':580,'回転焼':580,'今川焼き':380,'今川焼':380}}]}] }
     ];
+    const INFORMATION = {
+      guide:{title:'レジの取扱案内',html:'<section class="info-sheet"><h3>お買い物の流れ</h3><p>おつかいメモの商品をカゴに入れ、セルフレジで金額を登録してください。所持金以内でお会計できます。</p><p>レシートは右上のボタンから確認できます。タイトル画面に戻っても、カゴや登録途中の内容は保存されます。</p></section><section class="info-sheet"><h3>登録名の訂正</h3><p>この操作にはマスター権限が必要です。登録名には、売場やパッケージに記載された呼称を使用してください。送り仮名のある表記・省いた表記のどちらも使用できます。</p><p>マスターモードへの切り替えは、タイトル画面から行います。</p></section>'},
+      board:{title:'店内の掲示',html:'<article class="info-sheet"><div class="info-kicker">売場だより</div><h3>まちのおやつ</h3><div class="cake-art" aria-hidden="true"></div><p>丸い生地にあんを包んだ、昔ながらのおやつ。</p><p>「大判焼」「回転焼」「今川焼」など、地域によってさまざまな名前で親しまれています。</p></article><article class="info-sheet work-note"><div class="info-kicker">係員用・作業メモ</div><p>管理用スイッチは、店名の表示に組み込まれています。</p></article>'},
+      terminal:{title:'端末情報',html:'<section class="info-sheet"><h3>操作について</h3><p>通常操作は画面のボタンをタップしてください。</p><p>管理用スイッチは、3秒間押し続けてください。</p><p>キーボードの場合は、スイッチに移動してスペースキーまたはEnterキーを3秒間押し続けてください。</p></section>'},
+      master:{title:'マスターモード',html:'<section class="info-sheet"><h3>マスター権限が有効になりました</h3><p>セルフレジで登録名を訂正できます。</p></section>'}
+    };
     const $ = (selector, root=document) => root.querySelector(selector);
     const main = $('#main');
     const yen = number => number.toLocaleString('ja-JP') + '円';
     const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const products = question => question.groups.flatMap(group => group.products);
-    const blankState = () => ({version:3,level:1,phase:'title',basket:[],entries:{},cleared:[false,false,false,false],receipts:[]});
+    const blankState = () => ({version:4,level:1,phase:'title',basket:[],entries:{},registeredNames:{},masterUnlocked:false,cleared:[false,false,false,false],receipts:[]});
     const checkmark = '<svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg>';
     let storageFailed = false;
     let modal = null;
@@ -220,17 +262,53 @@
     let viewedReceipt = null;
     let showTitle = false;
     let legacyToBackup = null;
+    let holdTimer = null;
+    let holdTarget = null;
+    let holdOrigin = null;
+    let composing = false;
     let state = loadState();
 
-    function assess(question, names) {
+    function registrationPrice(product, name) {
+      if (product.aliases) return Object.prototype.hasOwnProperty.call(product.aliases,name) ? product.aliases[name] : null;
+      return product.name === name ? product.price : null;
+    }
+
+    function registeredName(name) {
+      return state.masterUnlocked && typeof state.registeredNames[name] === 'string' ? state.registeredNames[name].trim() : name;
+    }
+
+    function assess(question, names, registrations={}) {
       if (!Array.isArray(names)) return {ok:false};
       const available = products(question);
       const unique = new Set(names);
       if (unique.size !== names.length || names.some(name => !available.some(product => product.name === name))) return {ok:false,reason:'items'};
       if (question.groups.some(group => group.products.filter(product => unique.has(product.name)).length !== group.count)) return {ok:false,reason:'items'};
-      const items = available.filter(product => unique.has(product.name));
+      const items = available.filter(product => unique.has(product.name)).map(product => {
+        const name = typeof registrations[product.name] === 'string' ? registrations[product.name] : product.name;
+        const price = registrationPrice(product,name);
+        return price === null ? null : {name,price};
+      });
+      if (items.some(item => item === null)) return {ok:false,reason:'items'};
       const total = items.reduce((sum, product) => sum + product.price, 0);
       return {ok:total <= question.money,reason:total <= question.money ? null : 'budget',items,total};
+    }
+
+    function restoreReceipt(receipt,index,version) {
+      if (!receipt || receipt.level !== index+1 || !Array.isArray(receipt.items) || !Number.isFinite(Date.parse(receipt.issuedAt))) throw new Error('Invalid receipt');
+      let question = QUESTIONS[index];
+      if (index === 3 && version === 2) question = {money:420,groups:[{count:1,products:[{name:'番茶',price:420}]}]};
+      if (index === 3 && version === 3) question = {money:1000,groups:[{count:1,products:[{name:'納豆',price:340}]},{count:1,products:[{name:'番茶',price:420}]}]};
+      const names = [], registrations = {};
+      for (const item of receipt.items) {
+        if (!item || typeof item.name !== 'string' || !Number.isSafeInteger(item.price)) throw new Error('Invalid items');
+        const product = products(question).find(product => registrationPrice(product,item.name) === item.price);
+        if (!product) throw new Error('Invalid items');
+        names.push(product.name);registrations[product.name] = item.name;
+      }
+      const checked = assess(question,names,registrations);
+      if (!checked.ok) throw new Error('Invalid items');
+      if (receipt.total !== checked.total || receipt.paid !== question.money || receipt.change !== question.money-checked.total) throw new Error('Invalid total');
+      return {level:receipt.level,issuedAt:receipt.issuedAt,items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total};
     }
 
     function loadState() {
@@ -238,25 +316,19 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return blankState();
         const saved = JSON.parse(raw);
+        if (!saved || typeof saved !== 'object') return blankState();
         const oldThreeQuestions = saved.version === 1;
-        const legacy = saved.version === 1 || saved.version === 2;
-        if (![1,2,3].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','register','receipt','complete'].includes(saved.phase)) return blankState();
+        const legacy = saved.version < 4;
+        if (![1,2,3,4].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','register','receipt','complete'].includes(saved.phase)) return blankState();
         if (oldThreeQuestions && saved.level > 3) return blankState();
-        if (legacy && saved.phase === 'register') return blankState();
+        if (saved.version <= 2 && saved.phase === 'register') return blankState();
         if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
         const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.phase === 'complete' && !oldThreeQuestions ? 4 : saved.level-1;
         if (saved.phase === 'title' && saved.level !== 1) return blankState();
         if (oldThreeQuestions && saved.phase === 'receipt' && saved.level === 3) return blankState();
         if (saved.phase === 'complete' && saved.level !== (oldThreeQuestions ? 3 : 4)) return blankState();
         if (saved.receipts.length !== expectedReceipts) return blankState();
-        const receipts = saved.receipts.map((receipt, index) => {
-          if (!receipt || receipt.level !== index+1 || !Array.isArray(receipt.items) || !Number.isFinite(Date.parse(receipt.issuedAt))) throw new Error('Invalid receipt');
-          const question = legacy && index === 3 ? {money:420,groups:[{count:1,products:[{name:'番茶',price:420}]}]} : QUESTIONS[index];
-          const checked = assess(question, receipt.items.map(item => item.name));
-          if (!checked.ok || receipt.items.some(item => !checked.items.some(product => product.name === item.name && product.price === item.price))) throw new Error('Invalid items');
-          if (receipt.total !== checked.total || receipt.paid !== question.money || receipt.change !== question.money-checked.total) throw new Error('Invalid total');
-          return {level:receipt.level,issuedAt:receipt.issuedAt,items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total};
-        });
+        const receipts = saved.receipts.map((receipt,index) => restoreReceipt(receipt,index,saved.version));
         // 旧3問版の完了記録から、購入済みの第3問のレシートを復元する。
         const previousComplete = oldThreeQuestions && saved.phase === 'complete';
         if (previousComplete) {
@@ -272,12 +344,18 @@
         const available = products(QUESTIONS[level-1]).map(product => product.name);
         const basket = previousComplete || replacedFourthQuestion ? [] : [...new Set(saved.basket)].filter(name => available.includes(name));
         const entries = {};
-        if (!legacy && saved.entries && typeof saved.entries === 'object' && !Array.isArray(saved.entries)) {
+        if (!previousComplete && !replacedFourthQuestion && saved.version >= 3 && saved.entries && typeof saved.entries === 'object' && !Array.isArray(saved.entries)) {
           available.forEach(name => {if (typeof saved.entries[name] === 'string') entries[name] = saved.entries[name];});
+        }
+        const masterUnlocked = !legacy && saved.masterUnlocked === true;
+        const registeredNames = {};
+        if (masterUnlocked && saved.registeredNames && typeof saved.registeredNames === 'object' && !Array.isArray(saved.registeredNames)) {
+          available.forEach(name => {if (typeof saved.registeredNames[name] === 'string') registeredNames[name] = saved.registeredNames[name];});
         }
         const cleared = QUESTIONS.map((_,index) => receipts.length > index || (phase === 'complete' && index === 3));
         if (legacy) legacyToBackup = raw;
-        return {version:3,level,phase,basket:['shopping','register'].includes(phase) ? basket : [],entries:['shopping','register'].includes(phase) ? entries : {},cleared,receipts};
+        const active = ['shopping','register'].includes(phase);
+        return {version:4,level,phase,basket:active ? basket : [],entries:active ? entries : {},registeredNames:active ? registeredNames : {},masterUnlocked,cleared,receipts};
       } catch (error) {
         if (!(error instanceof SyntaxError) && error.message !== 'Invalid receipt' && error.message !== 'Invalid items' && error.message !== 'Invalid total') storageFailed = true;
         return blankState();
@@ -287,13 +365,14 @@
     function saveState() {
       try {
         if (legacyToBackup !== null) {
-          if (localStorage.getItem(LEGACY_BACKUP_KEY) === null) localStorage.setItem(LEGACY_BACKUP_KEY,legacyToBackup);
+          if (localStorage.getItem(MASTER_BACKUP_KEY) === null) localStorage.setItem(MASTER_BACKUP_KEY,legacyToBackup);
           legacyToBackup = null;
         }
         localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
       }
       catch (_) { storageFailed = true; }
       $('#storage-notice').hidden = !storageFailed;
+      $('#master-status').textContent = state.masterUnlocked ? '権限：マスター' : '権限：標準';
     }
 
     function updateHeader() {
@@ -302,9 +381,12 @@
       $('#receipt-count').hidden = count === 0;
       $('#open-receipts').setAttribute('aria-label',`レシート（${count}枚）`);
       $('#storage-notice').hidden = !storageFailed;
+      $('#master-status').textContent = state.masterUnlocked ? '権限：マスター' : '権限：標準';
     }
 
     function render() {
+      cancelMasterHold();
+      composing = false;
       updateHeader();
       main.className = '';
       if (showTitle || state.phase === 'title') renderTitle();
@@ -320,7 +402,7 @@
 
     function renderTitle() {
       const started = state.phase !== 'title';
-      main.innerHTML = `<section class="title-screen"><div class="title-content">${shopArt()}<div class="eyebrow">おつかいスーパー</div><h1>レジ</h1><p class="title-subtitle">頼まれたものを、カゴに入れてお会計。</p><button class="primary" type="button" data-action="start">${started ? 'つづきから' : 'おつかいを始める'}</button>${started ? '<button class="quiet" type="button" data-action="reset">最初からやり直す</button>' : ''}</div></section>`;
+      main.innerHTML = `<section class="title-screen"><div class="title-content">${shopArt()}<button class="eyebrow master-switch" data-master-switch type="button">おつかいスーパー</button><h1>レジ</h1><p class="title-subtitle">頼まれたものを、カゴに入れてお会計。</p><p class="title-rule">おつかいメモの品を、所持金以内で買ってきてね。</p><button class="primary" type="button" data-action="start">${started ? 'つづきから' : 'おつかいを始める'}</button>${started ? '<button class="quiet" type="button" data-action="reset">最初からやり直す</button>' : ''}</div></section>`;
     }
 
     function renderShopping() {
@@ -332,8 +414,9 @@
       main.innerHTML = `
         ${missionHTML(question)}
         ${state.level === 1 ? '<p class="operation-guide">商品の値札を確認して、金額を登録してください。</p>' : ''}
+        <button class="notice-link" type="button" data-info="board"><span>店内の掲示</span><span aria-hidden="true">見る ›</span></button>
         <section aria-labelledby="shelf-heading"><div class="shelf-heading"><h2 id="shelf-heading">商品棚</h2><span>タップしてカゴへ</span></div>
-          ${question.groups.map(group => `<section class="shelf-group ${group.style}" aria-label="${group.name}"><h3>${group.name}</h3><div class="product-grid${group.products.length === 2 ? ' two' : ''}">${group.products.map(product => `
+          ${question.groups.map(group => `<section class="shelf-group ${group.style}" aria-label="${group.name}"><h3>${group.name}</h3><div class="product-grid${group.products.length === 2 ? ' two' : group.products.length === 1 ? ' single' : ''}">${group.products.map(product => `
             <button type="button" class="product-card" data-product="${product.name}" aria-pressed="${selected.has(product.name)}">
               <span class="package" aria-hidden="true"></span><span class="product-name">${product.name}</span>
               ${hiddenPrices ? '<span class="price-tag missing" aria-label="値札なし">？？？</span>' : `<span class="price-tag">${product.price.toLocaleString('ja-JP')}<small>円</small></span>`}
@@ -341,7 +424,7 @@
             </button>`).join('')}</div></section>`).join('')}
         </section>
         <section class="basket" aria-labelledby="basket-heading"><div class="basket-title"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-2 11H5L3 9zM7 9l3-6M17 9l-3-6M9 13v3M15 13v3"/></svg><h2 id="basket-heading">買い物カゴ</h2><span>${items.length}点</span></div>
-          ${items.length ? `<ul class="basket-list">${items.map(product => `<li class="basket-item"><span class="basket-item-name">${product.name}</span>${hiddenPrices ? '' : `<span class="basket-price">${yen(product.price)}</span>`}<button type="button" class="remove-button" data-remove="${product.name}" aria-label="${product.name}をカゴから出す"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></svg></button></li>`).join('')}</ul>` : '<p class="basket-empty">カゴは空です</p>'}
+          ${items.length ? `<ul class="basket-list">${items.map(product => `<li class="basket-item"><span class="basket-item-name">${escapeHTML(registeredName(product.name))}</span>${hiddenPrices ? '' : `<span class="basket-price">${yen(product.price)}</span>`}<button type="button" class="remove-button" data-remove="${product.name}" aria-label="カゴから出す"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></svg></button></li>`).join('')}</ul>` : '<p class="basket-empty">カゴは空です</p>'}
         </section>
         <p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p>
         <div class="checkout-dock"><div class="checkout-inner"><div class="checkout-total"><span class="total-label">カゴ</span>${items.length}点</div><button class="primary" type="button" data-action="register">セルフレジへ</button></div></div>`;
@@ -373,8 +456,24 @@
       const question = QUESTIONS[state.level-1];
       const items = products(question).filter(product => state.basket.includes(product.name));
       main.className = 'registering';
-      main.innerHTML = `${missionHTML(question)}<section aria-labelledby="register-heading"><div class="register-heading"><h2 id="register-heading" tabindex="-1">セルフレジ</h2><button class="secondary" type="button" data-action="shelf">商品棚へ戻る</button></div><form id="register-form" novalidate autocomplete="off"><div class="register-list">${items.length ? items.map((product,index) => `<label class="register-row" for="amount-${index}"><span class="register-product"><span class="register-name">${product.name}</span><span class="register-tag">値札<strong>${state.level <= 2 ? yen(product.price) : '？？？円'}</strong></span></span><span class="amount-field"><span class="sr-only">金額</span><input class="amount-input" id="amount-${index}" data-entry="${product.name}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="${index < items.length-1 ? 'next' : 'done'}" value="${escapeHTML(state.entries[product.name] || '')}"><span>円</span></span></label>`).join('') : '<p class="basket-empty">カゴは空です</p>'}</div><p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p><div class="checkout-dock"><div class="checkout-inner"><div><span class="checkout-caption">入力合計</span><output class="checkout-total" id="entered-total" for="${items.map((_,index) => 'amount-'+index).join(' ')}"></output></div><button class="primary" type="submit">登録して会計</button></div></div></form></section>`;
+      main.innerHTML = `${missionHTML(question)}
+        <section aria-labelledby="register-heading">
+          <div class="register-heading"><h2 id="register-heading" tabindex="-1">セルフレジ</h2><button class="secondary" type="button" data-action="shelf">商品棚へ戻る</button></div>
+          <div class="access-panel"><span>登録名の訂正</span><span class="access-status${state.masterUnlocked ? ' active' : ''}">${state.masterUnlocked ? 'マスター権限：有効' : '🔒 マスター権限が必要です'}</span></div>
+          <form id="register-form" novalidate autocomplete="off">
+            <div class="register-list">${items.length ? items.map((product,index) => registerRowHTML(product,index,items.length)).join('') : '<p class="basket-empty">カゴは空です</p>'}</div>
+            <p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p>
+            <div class="checkout-dock"><div class="checkout-inner"><div><span class="checkout-caption">入力合計</span><output class="checkout-total" id="entered-total" for="${items.map((_,index) => 'amount-'+index).join(' ')}"></output></div><button class="primary" type="submit">登録して会計</button></div></div>
+          </form>
+          <div class="register-tools"><button class="quiet" type="button" data-info="terminal">端末情報</button></div>
+        </section>`;
       updateEnteredTotal();
+    }
+
+    function registerRowHTML(product,index,count) {
+      const name = registeredName(product.name);
+      const nameHTML = state.masterUnlocked ? `<label class="name-label" for="name-${index}"><span class="sr-only">${product.name}の登録名</span><input class="name-input" id="name-${index}" data-name-entry="${product.name}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" value="${escapeHTML(name)}"></label>` : `<span class="register-name">${escapeHTML(name)}</span>`;
+      return `<div class="register-row"><div class="register-product">${nameHTML}<span class="register-tag">値札<strong>${state.level <= 2 ? yen(product.price) : '？？？円'}</strong></span></div><label class="amount-field" for="amount-${index}"><span class="sr-only">${product.name}の金額</span><input class="amount-input" id="amount-${index}" data-entry="${product.name}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="${index < count-1 ? 'next' : 'done'}" value="${escapeHTML(state.entries[product.name] || '')}"><span>円</span></label></div>`;
     }
 
     function updateEnteredTotal() {
@@ -431,8 +530,10 @@
     function checkout() {
       if (state.phase !== 'register') return;
       const question = QUESTIONS[state.level-1];
-      const result = assess(question,state.basket);
-      if (!result.ok || result.items.some(product => parseAmount(state.entries[product.name]) !== product.price)) {
+      const selected = products(question).filter(product => state.basket.includes(product.name));
+      const registrations = Object.fromEntries(selected.map(product => [product.name,registeredName(product.name)]));
+      const result = assess(question,state.basket,registrations);
+      if (!result.ok || selected.some(product => parseAmount(state.entries[product.name]) !== registrationPrice(product,registrations[product.name]))) {
         const status = $('#checkout-status');
         status.textContent = '登録内容を確認してください。';
         status.focus();
@@ -444,6 +545,7 @@
       state.phase = 'receipt';
       state.basket = [];
       state.entries = {};
+      state.registeredNames = {};
       saveState();
       render();
       window.scrollTo(0,0);
@@ -460,6 +562,7 @@
       }
       state.basket = [];
       state.entries = {};
+      state.registeredNames = {};
       saveState();
       render();
       window.scrollTo(0,0);
@@ -469,8 +572,9 @@
     }
 
     function resetGame() {
+      cancelMasterHold();
       if (!window.confirm('最初からやり直しますか？\nおつかいの進み具合とレシートが消えます。')) return;
-      try { localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_BACKUP_KEY); } catch (_) { storageFailed = true; }
+      try { localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_BACKUP_KEY);localStorage.removeItem(MASTER_BACKUP_KEY); } catch (_) { storageFailed = true; }
       legacyToBackup = null;
       closeModal();
       state = blankState();
@@ -483,6 +587,7 @@
     }
 
     function openModal(id) {
+      cancelMasterHold();
       if (modal) closeModal();
       returnFocus = document.activeElement;
       modal = $(id);
@@ -502,6 +607,34 @@
       document.body.style.overflow = '';
       if (returnFocus && returnFocus.isConnected) returnFocus.focus({preventScroll:true});
       returnFocus = null;
+    }
+
+    function showInformation(kind) {
+      const information = INFORMATION[kind];
+      if (!information) return;
+      $('#info-title').textContent = information.title;
+      $('#info-content').innerHTML = information.html;
+      $('#info-content').scrollTop = 0;
+      openModal('#info-modal');
+    }
+
+    function cancelMasterHold() {
+      if (holdTimer !== null) window.clearTimeout(holdTimer);
+      if (holdTarget) holdTarget.classList.remove('is-holding');
+      holdTimer = null;holdTarget = null;holdOrigin = null;
+    }
+
+    function startMasterHold(target,origin=null) {
+      cancelMasterHold();
+      if (modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+      holdTarget = target;holdOrigin = origin;
+      target.classList.add('is-holding');
+      holdTimer = window.setTimeout(() => {
+        cancelMasterHold();
+        if (modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+        state.masterUnlocked = true;
+        saveState();updateHeader();showInformation('master');
+      },3000);
     }
 
     function renderReceiptModal() {
@@ -527,6 +660,11 @@
       }
     });
     main.addEventListener('input', event => {
+      const nameInput = event.target.closest('[data-name-entry]');
+      if (nameInput && state.phase === 'register' && state.masterUnlocked && state.basket.includes(nameInput.dataset.nameEntry)) {
+        state.registeredNames[nameInput.dataset.nameEntry] = nameInput.value;
+        saveState();$('#checkout-status').textContent = '';return;
+      }
       const input = event.target.closest('[data-entry]');
       if (!input || state.phase !== 'register' || !state.basket.includes(input.dataset.entry)) return;
       state.entries[input.dataset.entry] = input.value;
@@ -535,12 +673,15 @@
     });
     main.addEventListener('submit', event => {
       if (event.target.id !== 'register-form') return;
-      event.preventDefault();checkout();
+      event.preventDefault();if (!composing) checkout();
     });
+    main.addEventListener('compositionstart', () => {composing=true;});
+    main.addEventListener('compositionend', () => {composing=false;});
+    main.addEventListener('focusout', event => {if (event.target.matches('[data-name-entry]')) composing=false;});
     main.addEventListener('keydown', event => {
-      if (event.key !== 'Enter' || !event.target.matches('[data-entry]')) return;
+      if (event.key !== 'Enter' || !event.target.matches('[data-entry],[data-name-entry]') || event.isComposing || composing || event.keyCode === 229) return;
       event.preventDefault();
-      const inputs = Array.from(main.querySelectorAll('[data-entry]'));
+      const inputs = Array.from(main.querySelectorAll('[data-name-entry],[data-entry]'));
       const next = inputs[inputs.indexOf(event.target)+1];
       if (next) {next.focus();next.select();} else checkout();
     });
@@ -558,6 +699,34 @@
     document.querySelectorAll('.modal-layer').forEach(layer => layer.addEventListener('click', event => {
       if (event.target === layer || event.target.closest('[data-close-modal]')) closeModal();
     }));
+    document.addEventListener('click', event => {
+      const button = event.target.closest('[data-info]');
+      if (button) showInformation(button.dataset.info);
+    });
+    document.addEventListener('pointerdown', event => {
+      const target = event.target.closest('[data-master-switch]');
+      if (!target || event.button !== 0 || event.isPrimary === false) {cancelMasterHold();return;}
+      if (modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+      event.preventDefault();
+      startMasterHold(target,{x:event.clientX,y:event.clientY,id:event.pointerId});
+      try {target.setPointerCapture(event.pointerId);} catch (_) {}
+    });
+    document.addEventListener('pointermove', event => {
+      if (holdOrigin && event.pointerId === holdOrigin.id && Math.hypot(event.clientX-holdOrigin.x,event.clientY-holdOrigin.y)>12) cancelMasterHold();
+    });
+    document.addEventListener('pointerup', cancelMasterHold);
+    document.addEventListener('pointercancel', cancelMasterHold);
+    document.addEventListener('lostpointercapture', cancelMasterHold);
+    document.addEventListener('contextmenu', event => {if (event.target.closest('[data-master-switch]')) event.preventDefault();});
+    document.addEventListener('focusout', event => {if (event.target === holdTarget) cancelMasterHold();});
+    document.addEventListener('keydown', event => {
+      const target = event.target.closest('[data-master-switch]');
+      if (!target || ![' ','Enter'].includes(event.key) || modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+      event.preventDefault();if (!event.repeat) startMasterHold(target);
+    });
+    document.addEventListener('keyup', event => {if ([' ','Enter'].includes(event.key)) cancelMasterHold();});
+    document.addEventListener('visibilitychange', () => {if (document.hidden) cancelMasterHold();});
+    window.addEventListener('blur', cancelMasterHold);
     document.addEventListener('keydown', event => {
       if (!modal) return;
       if (event.key === 'Escape') {event.preventDefault();closeModal();return;}
@@ -567,7 +736,7 @@
       if (event.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) {event.preventDefault();last.focus();}
       else if (!event.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {event.preventDefault();first.focus();}
     });
-    window.addEventListener('pagehide', () => {if (state.phase !== 'title') saveState();});
+    window.addEventListener('pagehide', () => {cancelMasterHold();if (state.phase !== 'title') saveState();});
     if (legacyToBackup !== null) saveState();
     render();
   })();
