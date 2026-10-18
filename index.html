@@ -240,11 +240,11 @@
       { level:3, money:520, memo:'豆類を1つ、\nお茶を1つ買ってきてね。',
         groups:[{name:'豆類',style:'beans',count:1,products:[{name:'大豆',price:200},{name:'茶豆',price:320},{name:'青大豆',price:360}]},
           {name:'お茶',style:'tea',count:1,products:[{name:'麦茶',price:320},{name:'小豆茶',price:380},{name:'大豆茶',price:380}]}] },
-      { level:4, money:400, memo:'大判焼きを1つ買ってきてね。',
-        groups:[{name:'和菓子',style:'sweets',count:1,products:[{name:'大判焼き',price:440,aliases:{'大判焼き':440,'大判焼':440,'回転焼き':580,'回転焼':580,'今川焼き':380,'今川焼':380}}]}] }
+      { level:4, money:400, memo:'大判焼を1つ買ってきてね。',
+        groups:[{name:'和菓子',style:'sweets',count:1,products:[{name:'大判焼',price:440,aliases:{'大判焼':440,'回転焼':580,'今川焼':380}}]}] }
     ];
     const INFORMATION = {
-      guide:{title:'レジの取扱案内',html:'<section class="info-sheet"><h3>お買い物の流れ</h3><p>おつかいメモの商品をカゴに入れ、セルフレジで金額を登録してください。所持金以内でお会計できます。</p><p>レシートは右上のボタンから確認できます。タイトル画面に戻っても、カゴや登録途中の内容は保存されます。</p></section><section class="info-sheet"><h3>登録名の訂正</h3><p>この操作にはマスター権限が必要です。登録名には、売場やパッケージに記載された呼称を使用してください。送り仮名のある表記・省いた表記のどちらも使用できます。</p><p>マスターモードへの切り替えは、タイトル画面から行います。</p></section>'},
+      guide:{title:'レジの取扱案内',html:'<section class="info-sheet"><h3>お買い物の流れ</h3><p>おつかいメモの商品をカゴに入れ、セルフレジで金額を登録してください。所持金以内でお会計できます。</p><p>レシートは右上のボタンから確認できます。タイトル画面に戻っても、カゴや登録途中の内容は保存されます。</p></section><section class="info-sheet"><h3>登録名の訂正</h3><p>この操作にはマスター権限が必要です。登録名には、売場やパッケージに記載された呼称を使用してください。</p><p>マスターモードへの切り替えは、タイトル画面から行います。</p></section>'},
       board:{title:'店内の掲示',html:'<article class="info-sheet"><div class="info-kicker">売場だより</div><h3>まちのおやつ</h3><div class="cake-art" aria-hidden="true"></div><p>丸い生地にあんを包んだ、昔ながらのおやつ。</p><p>「大判焼」「回転焼」「今川焼」など、地域によってさまざまな名前で親しまれています。</p></article><article class="info-sheet work-note"><div class="info-kicker">係員用・作業メモ</div><p>管理用スイッチは、店名の表示に組み込まれています。</p></article>'},
       terminal:{title:'端末情報',html:'<section class="info-sheet"><h3>操作について</h3><p>通常操作は画面のボタンをタップしてください。</p><p>管理用スイッチは、3秒間押し続けてください。</p><p>キーボードの場合は、スイッチに移動してスペースキーまたはEnterキーを3秒間押し続けてください。</p></section>'},
       master:{title:'マスターモード',html:'<section class="info-sheet"><h3>マスター権限が有効になりました</h3><p>セルフレジで登録名を訂正できます。</p></section>'}
@@ -254,7 +254,7 @@
     const yen = number => number.toLocaleString('ja-JP') + '円';
     const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const products = question => question.groups.flatMap(group => group.products);
-    const blankState = () => ({version:4,level:1,phase:'title',basket:[],entries:{},registeredNames:{},masterUnlocked:false,cleared:[false,false,false,false],receipts:[]});
+    const blankState = () => ({version:5,level:1,phase:'title',basket:[],entries:{},registeredNames:{},masterUnlocked:false,cleared:[false,false,false,false],receipts:[]});
     const checkmark = '<svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg>';
     let storageFailed = false;
     let modal = null;
@@ -319,7 +319,7 @@
         if (!saved || typeof saved !== 'object') return blankState();
         const oldThreeQuestions = saved.version === 1;
         const legacy = saved.version < 4;
-        if (![1,2,3,4].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','register','receipt','complete'].includes(saved.phase)) return blankState();
+        if (![1,2,3,4,5].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','register','receipt','complete'].includes(saved.phase)) return blankState();
         if (oldThreeQuestions && saved.level > 3) return blankState();
         if (saved.version <= 2 && saved.phase === 'register') return blankState();
         if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
@@ -328,6 +328,23 @@
         if (oldThreeQuestions && saved.phase === 'receipt' && saved.level === 3) return blankState();
         if (saved.phase === 'complete' && saved.level !== (oldThreeQuestions ? 3 : 4)) return blankState();
         if (saved.receipts.length !== expectedReceipts) return blankState();
+        // 旧表記の保存データを引き継ぎ、商品名を現在の売場表記へ揃える。
+        if (saved.version === 4 && saved.level === 4) {
+          const normalize = name => typeof name === 'string' ? name.replace(/^(\s*)(大判焼|回転焼|今川焼)き(\s*)$/, '$1$2$3') : name;
+          saved.basket = saved.basket.map(normalize);
+          for (const field of ['entries','registeredNames']) {
+            const values = saved[field];
+            if (!values || typeof values !== 'object' || Array.isArray(values)) continue;
+            if (typeof values['大判焼き'] === 'string') {
+              values['大判焼'] = field === 'registeredNames' ? normalize(values['大判焼き']) : values['大判焼き'];
+            }
+          }
+          saved.receipts.forEach(receipt => {
+            if (receipt && receipt.level === 4 && Array.isArray(receipt.items)) {
+              receipt.items.forEach(item => {if (item && typeof item.name === 'string') item.name = normalize(item.name);});
+            }
+          });
+        }
         const receipts = saved.receipts.map((receipt,index) => restoreReceipt(receipt,index,saved.version));
         // 旧3問版の完了記録から、購入済みの第3問のレシートを復元する。
         const previousComplete = oldThreeQuestions && saved.phase === 'complete';
@@ -353,9 +370,9 @@
           available.forEach(name => {if (typeof saved.registeredNames[name] === 'string') registeredNames[name] = saved.registeredNames[name];});
         }
         const cleared = QUESTIONS.map((_,index) => receipts.length > index || (phase === 'complete' && index === 3));
-        if (legacy) legacyToBackup = raw;
+        if (legacy || saved.version === 4) legacyToBackup = raw;
         const active = ['shopping','register'].includes(phase);
-        return {version:4,level,phase,basket:active ? basket : [],entries:active ? entries : {},registeredNames:active ? registeredNames : {},masterUnlocked,cleared,receipts};
+        return {version:5,level,phase,basket:active ? basket : [],entries:active ? entries : {},registeredNames:active ? registeredNames : {},masterUnlocked,cleared,receipts};
       } catch (error) {
         if (!(error instanceof SyntaxError) && error.message !== 'Invalid receipt' && error.message !== 'Invalid items' && error.message !== 'Invalid total') storageFailed = true;
         return blankState();
