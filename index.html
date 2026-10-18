@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#285d48">
+  <meta name="referrer" content="no-referrer">
+  <title>レジ</title>
+  <style>
+    :root{color-scheme:light;--ink:#243b31;--muted:#627269;--green:#285d48;--green-dark:#1e4a38;--light:#eaf0e8;--line:#d9e1d7;--paper:#fffef9;--bg:#f5f5ee;--header:72px;--safe:env(safe-area-inset-bottom,0px)}
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    html{scroll-padding-top:230px;-webkit-text-size-adjust:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;font-size:16px;line-height:1.6}
+    button{font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    button:focus-visible{outline:3px solid #b3742d;outline-offset:4px}
+    button{cursor:pointer}
+    svg{display:block;flex-shrink:0}
+    .site-header{height:var(--header);position:sticky;top:0;z-index:30;background:rgba(245,245,238,.97);border-bottom:1px solid var(--line)}
+    .header-inner{height:100%;max-width:760px;margin:auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .store-brand{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:750;letter-spacing:.02em;white-space:nowrap}
+    .store-symbol{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--green);color:#fff}
+    .header-actions{display:flex;gap:5px}
+    .icon-button{position:relative;min-width:44px;min-height:44px;border:1px solid transparent;background:transparent;border-radius:12px;display:grid;place-items:center}
+    .icon-button:hover{background:#e6ece2}
+    .receipt-count{position:absolute;right:0;top:0;min-width:19px;height:19px;border:2px solid var(--bg);border-radius:12px;background:var(--green);color:white;font-size:10px;line-height:15px;text-align:center;font-weight:700}
+    main{max-width:760px;min-height:calc(100svh - var(--header));margin:0 auto;padding:22px 20px 40px}
+    main.shopping{padding-bottom:calc(144px + var(--safe))}
+    .primary,.secondary,.quiet{min-height:48px;border-radius:12px;padding:11px 20px;font-weight:700;line-height:1.5}
+    .primary{background:var(--green);color:white;border:1px solid var(--green);box-shadow:0 3px 0 rgba(18,56,37,.08)}
+    .primary:hover{background:var(--green-dark)}
+    .secondary{background:#fffef9;border:1px solid var(--line)}
+    .secondary:hover{background:var(--light)}
+    .quiet{background:transparent;border:1px solid transparent;color:var(--muted);font-weight:500}
+    .full-width{width:100%}
+    .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+    .title-screen{min-height:calc(100svh - 160px);display:flex;align-items:center;justify-content:center;text-align:center;padding:30px 0}
+    .title-content{width:100%;max-width:360px}
+    .shop-art{width:156px;height:148px;margin:0 auto 25px;color:var(--green)}
+    .title-screen h1{font-weight:750;font-size:64px;line-height:1.1;letter-spacing:.12em;margin:14px 0 22px;padding-left:.12em}
+    .title-subtitle{font-size:15px;line-height:1.9;margin:0 0 34px;color:var(--muted)}
+    .title-content .primary{min-height:54px;width:100%}
+    .title-content .quiet{margin-top:10px}
+    .mission{position:sticky;top:calc(var(--header) + 8px);z-index:20;background:#fffdf2;border:1px solid #e4e0c9;border-radius:15px;padding:17px 19px 18px;box-shadow:0 3px 12px rgba(45,63,43,.045);margin-bottom:26px}
+    .mission-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .level-label{font-size:12px;color:#6c7056;letter-spacing:.06em;font-weight:700}
+    .wallet{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:9px;white-space:nowrap}
+    .wallet strong{font-size:18px;line-height:1.4;color:var(--ink);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+    .mission h1{font-size:12px;letter-spacing:.08em;margin:0 0 4px;color:#6c7056;font-weight:500}
+    .memo-text{font-size:17px;font-weight:650;line-height:1.7;margin:0;white-space:pre-line}
+    .shelf-heading{display:flex;align-items:center;justify-content:space-between;margin:0 0 17px}
+    .shelf-heading h2,.basket h2{font-size:16px;letter-spacing:.03em;margin:0;font-weight:750}
+    .shelf-heading span{font-size:11px;color:var(--muted)}
+    .shelf-group{margin-bottom:23px}
+    .shelf-group h3{font-size:13px;font-weight:650;color:var(--muted);margin:0 0 10px;padding-left:2px}
+    .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+    .product-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .product-card{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--paper);padding:17px 8px 12px;box-shadow:0 3px 0 #e7eade;transition:background .12s,border-color .12s}
+    .product-card:hover{background:#f9fcf6}
+    .product-card[aria-pressed="true"]{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green),0 3px 0 #d9e3d5;background:#edf3e8}
+    .package{position:relative;width:44px;height:49px;margin:0 0 12px;border:1px solid #b8c9b0;border-radius:4px 4px 8px 8px;background:#e2e9d6;overflow:hidden}
+    .package:before{content:"";position:absolute;top:6px;left:0;right:0;border-top:1px solid #b8c9b0}
+    .package:after{content:"";position:absolute;left:12px;right:12px;top:22px;height:12px;border:1px solid #b8c9b0;border-radius:50%}
+    .grain .package{background:#eee4ce;border-color:#cec2a3}
+    .grain .package:before,.grain .package:after{border-color:#cec2a3}
+    .tea .package{background:#dee7df;border-color:#b6c8bb}
+    .tea .package:before,.tea .package:after{border-color:#b6c8bb}
+    .product-name{font-size:22px;font-weight:700;line-height:1.5;letter-spacing:.03em;white-space:nowrap}
+    .price-tag{display:block;min-width:68px;border-radius:4px;background:#f1eee1;padding:3px 7px;margin:8px 0 10px;font-size:17px;font-weight:750;line-height:1.4;font-variant-numeric:tabular-nums}
+    .price-tag small{font-size:11px;font-weight:500;margin-left:2px}
+    .price-tag.missing{background:#eeeee5;color:#7c8377;font-size:17px;font-weight:500;letter-spacing:.1em}
+    .selection-label{display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--muted);line-height:1.5;min-height:18px}
+    .selection-dot{display:block;width:14px;height:14px;border:1px solid #b9c4b6;border-radius:50%;background:white;position:relative}
+    [aria-pressed="true"] .selection-label{color:var(--green);font-weight:700}
+    [aria-pressed="true"] .selection-dot{border-color:var(--green);background:var(--green)}
+    [aria-pressed="true"] .selection-dot:after{content:"";position:absolute;width:5px;height:3px;top:3px;left:3px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg)}
+    .basket{border-top:1px solid var(--line);padding-top:23px;margin-top:29px}
+    .basket-title{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+    .basket-title span{font-size:12px;color:var(--muted)}
+    .basket-empty{border:1px dashed #cbd5c5;padding:20px 10px;margin:0;border-radius:12px;color:var(--muted);text-align:center;font-size:13px}
+    .basket-list{list-style:none;margin:0;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .basket-item{display:flex;align-items:center;gap:8px;padding:7px 9px 7px 16px;min-height:56px;border-top:1px solid #e8ebe0}
+    .basket-item:first-child{border-top:0}
+    .basket-item-name{flex:1;font-size:15px;font-weight:600;min-width:0}
+    .basket-price{font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .remove-button{width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:10px;background:transparent;color:var(--muted)}
+    .remove-button:hover{background:var(--light)}
+    .checkout-dock{position:fixed;bottom:0;left:0;right:0;z-index:25;background:#fffef9;border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(36,59,49,.04);padding:13px 20px calc(13px + var(--safe))}
+    .checkout-inner{max-width:720px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin:auto}
+    .checkout-caption{font-size:11px;color:var(--muted);display:block}
+    .checkout-total{font-size:21px;font-weight:750;white-space:nowrap;line-height:1.6;font-variant-numeric:tabular-nums}
+    .checkout-total .total-label{font-size:12px;font-weight:500;margin-right:8px;color:var(--muted)}
+    .checkout-inner .primary{min-width:156px;min-height:52px}
+    .checkout-status{color:#934d34;font-size:14px;font-weight:600;margin:14px 0 0;min-height:23px;scroll-margin-top:240px}
+    .checkout-status:empty{display:none}
+    .success-heading{text-align:center;margin:8px 0 27px}
+    .success-mark{display:grid;place-items:center;border-radius:50%;width:48px;height:48px;background:var(--light);color:var(--green);margin:0 auto 12px}
+    .success-heading h1{font-size:21px;margin:0 0 5px}
+    .success-heading p{font-size:13px;color:var(--muted);margin:0}
+    .receipt-wrap{width:100%;max-width:340px;margin:0 auto 27px;padding-bottom:9px;filter:drop-shadow(0 4px 6px rgba(30,49,38,.07))}
+    .receipt-paper{position:relative;background:#fff;color:#30342f;padding:28px 24px 24px;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,monospace;font-size:14px;line-height:1.9}
+    .receipt-paper:after{content:"";position:absolute;bottom:-8px;left:0;width:100%;height:9px;background:linear-gradient(135deg,#fff 25%,transparent 25%) -5px 0/10px 10px,linear-gradient(225deg,#fff 25%,transparent 25%) -5px 0/10px 10px}
+    .receipt-store{text-align:center;font-size:18px;letter-spacing:.04em;font-weight:700;margin-bottom:5px;white-space:nowrap}
+    .receipt-caption{text-align:center;font-size:11px;letter-spacing:.16em;margin-bottom:14px}
+    .receipt-date{font-size:11px;line-height:1.7;margin-bottom:14px;font-variant-numeric:tabular-nums}
+    .receipt-lines{border-top:1px dashed #a7ada5;border-bottom:1px dashed #a7ada5;padding:12px 0;margin:0 0 11px}
+    .receipt-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .receipt-row span:last-child{text-align:right}
+    .receipt-total{font-size:17px;font-weight:700;margin:8px 0 10px}
+    .receipt-thanks{text-align:center;font-size:11px;margin:21px 0 0;line-height:1.9}
+    .interlude-actions{max-width:340px;margin:auto}
+    .complete-screen{min-height:calc(100svh - 165px);display:flex;align-items:center;justify-content:center;text-align:center}
+    .complete-screen h1{font-size:28px;letter-spacing:.03em;margin:20px 0 12px}
+    .complete-screen p{color:var(--muted);font-size:14px;margin:0 0 32px}
+    .complete-screen .success-mark{width:72px;height:72px}
+    .modal-layer{position:fixed;inset:0;z-index:100;background:rgba(25,42,33,.38);padding:24px 16px calc(16px + var(--safe));display:flex;align-items:center;justify-content:center}
+    .modal-panel{width:100%;max-width:470px;max-height:calc(100dvh - 40px - var(--safe));display:flex;flex-direction:column;border-radius:18px;background:#f1f2e9;box-shadow:0 18px 60px rgba(22,40,30,.2);overflow:hidden}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px 8px 22px;flex-shrink:0}
+    .modal-header h2{font-size:17px;margin:0}
+    .receipt-tabs{display:flex;gap:8px;padding:0 22px 16px;flex-shrink:0}
+    .receipt-tab{min-height:44px;flex:1;padding:8px 14px;background:transparent;border:1px solid #cbd6c5;border-radius:9px;font-size:13px}
+    .receipt-tab[aria-pressed="true"]{background:var(--green);color:white;border-color:var(--green)}
+    .modal-scroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:5px 22px 12px}
+    .modal-scroll .receipt-wrap{margin-bottom:20px}
+    .receipt-empty{font-size:14px;text-align:center;color:var(--muted);padding:32px 0 40px;margin:0}
+    .settings-body{padding:10px 22px 25px;overflow-y:auto}
+    .settings-body button{width:100%;margin-top:10px}
+    .danger-button{color:#934d34}
+    .storage-notice{background:#fff3da;color:#755c2d;text-align:center;padding:8px 15px;font-size:12px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(min-width:600px){main{padding-top:30px}.product-card{padding:22px 12px 15px}.package{width:49px;height:55px}.product-name{font-size:24px}.mission{padding:20px 24px}.memo-text{font-size:18px}.shelf-group{margin-bottom:27px}}
+    @media(max-width:360px){.header-inner{padding:0 12px}.store-brand{font-size:13px;gap:6px}.store-symbol{width:27px;height:27px}main{padding-left:14px;padding-right:14px}.mission{padding:14px 15px}.memo-text{font-size:16px}.wallet{gap:5px}.wallet strong{font-size:17px}.product-grid{gap:8px}.product-card{padding-left:4px;padding-right:4px}.product-name{font-size:20px}.checkout-dock{padding-left:14px;padding-right:14px}.checkout-inner{gap:9px}.checkout-inner .primary{min-width:142px}.checkout-total{font-size:19px}.receipt-paper{padding:24px 18px}.receipt-store{font-size:16px}.modal-scroll{padding-left:16px;padding-right:16px}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="store-brand"><span class="store-symbol" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v10h16V10M3 10l2-6h14l2 6M3 10c0 3 4 3 4 0 0 3 5 3 5 0 0 3 5 3 5 0 0 3 4 3 4 0M9 20v-6h6v6"/></svg></span>おつかいスーパー</div>
+        <div class="header-actions">
+          <button class="icon-button" id="open-receipts" type="button" aria-label="レシート（0枚）"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l2 1 2-1 2 1 2-1 2 1 2-1v18l-2-1-2 1-2-1-2 1-2-1-2 1V3zM9 8h6M9 12h6M9 16h4"/></svg><span class="receipt-count" id="receipt-count" hidden>0</span></button>
+          <button class="icon-button" id="open-settings" type="button" aria-label="メニュー"><svg aria-hidden="true" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 6h14M5 12h14M5 18h14"/></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="storage-notice" id="storage-notice" role="status" hidden>このブラウザでは進み具合を保存できません。ページを閉じると最初に戻ります。</div>
+    <main id="main"></main>
+    <div class="sr-only" id="selection-announcement" role="status" aria-live="polite" aria-atomic="true"></div>
+  </div>
+  <div class="modal-layer" id="receipt-modal" hidden>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="receipt-modal-title" tabindex="-1">
+      <div class="modal-header"><h2 id="receipt-modal-title">レシート</h2><button class="icon-button" type="button" data-close-modal aria-label="レシートを閉じる">✕</button></div>
+      <nav class="receipt-tabs" id="receipt-tabs" aria-label="所持レシート"></nav>
+      <div class="modal-scroll" id="receipt-content"></div>
+    </section>
+  </div>
+  <div class="modal-layer" id="settings-modal" hidden>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
+      <div class="modal-header"><h2 id="settings-title">メニュー</h2><button class="icon-button" type="button" data-close-modal aria-label="メニューを閉じる">✕</button></div>
+      <div class="settings-body">
+        <button class="secondary" id="return-title" type="button">タイトルへ</button>
+        <button class="secondary danger-button" id="reset-game" type="button">最初からやり直す</button>
+      </div>
+    </section>
+  </div>
+  <noscript><p style="padding:24px;text-align:center">おつかいを始めるには、ブラウザのJavaScriptを有効にしてください。</p></noscript>
+  <script>
+  (() => {
+    'use strict';
+    const STORAGE_KEY = 'regi-r01-play-v1';
+    const QUESTIONS = [
+      { level:1, money:500, memo:'青豆と小豆を1袋ずつ買ってきてね。',
+        groups:[{name:'豆類',style:'beans',count:2,products:[{name:'青豆',price:300},{name:'小豆',price:200}]}] },
+      { level:2, money:1260, memo:'穀物を1袋、\n豆を違う種類で2袋、\nお茶を1袋買ってきてね。',
+        groups:[{name:'穀物',style:'grain',count:1,products:[{name:'大麦',price:200}]},
+          {name:'豆類',style:'beans',count:2,products:[{name:'茶豆',price:320},{name:'青大豆',price:360},{name:'黒大豆',price:420}]},
+          {name:'お茶',style:'tea',count:1,products:[{name:'小豆茶',price:380},{name:'玄米茶',price:400}]}] },
+      { level:3, money:520, memo:'豆類を1つ、\nお茶を1つ買ってきてね。',
+        groups:[{name:'豆類',style:'beans',count:1,products:[{name:'大豆',price:200},{name:'茶豆',price:320},{name:'青大豆',price:360}]},
+          {name:'お茶',style:'tea',count:1,products:[{name:'麦茶',price:320},{name:'小豆茶',price:380},{name:'大豆茶',price:380}]}] }
+    ];
+    const $ = (selector, root=document) => root.querySelector(selector);
+    const main = $('#main');
+    const yen = number => number.toLocaleString('ja-JP') + '円';
+    const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const products = question => question.groups.flatMap(group => group.products);
+    const blankState = () => ({version:1,level:1,phase:'title',basket:[],cleared:[false,false,false],receipts:[]});
+    const checkmark = '<svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg>';
+    let storageFailed = false;
+    let modal = null;
+    let returnFocus = null;
+    let viewedReceipt = null;
+    let showTitle = false;
+    let state = loadState();
+
+    function assess(question, names) {
+      const available = products(question);
+      const unique = new Set(names);
+      if (!Array.isArray(names) || unique.size !== names.length || names.some(name => !available.some(product => product.name === name))) return {ok:false,reason:'items'};
+      if (question.groups.some(group => group.products.filter(product => unique.has(product.name)).length !== group.count)) return {ok:false,reason:'items'};
+      const items = available.filter(product => unique.has(product.name));
+      const total = items.reduce((sum, product) => sum + product.price, 0);
+      return {ok:total <= question.money,reason:total <= question.money ? null : 'budget',items,total};
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return blankState();
+        const saved = JSON.parse(raw);
+        if (saved.version !== 1 || ![1,2,3].includes(saved.level) || !['title','shopping','receipt','complete'].includes(saved.phase)) return blankState();
+        if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
+        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.level - 1;
+        if (saved.phase === 'title' && saved.level !== 1) return blankState();
+        if (saved.phase === 'receipt' && saved.level === 3) return blankState();
+        if (saved.phase === 'complete' && saved.level !== 3) return blankState();
+        if (saved.receipts.length !== expectedReceipts) return blankState();
+        const receipts = saved.receipts.map((receipt, index) => {
+          const question = QUESTIONS[index];
+          if (!receipt || receipt.level !== index+1 || !Array.isArray(receipt.items) || !Number.isFinite(Date.parse(receipt.issuedAt))) throw new Error('Invalid receipt');
+          const checked = assess(question, receipt.items.map(item => item.name));
+          if (!checked.ok || receipt.items.some(item => !checked.items.some(product => product.name === item.name && product.price === item.price))) throw new Error('Invalid items');
+          if (receipt.total !== checked.total || receipt.paid !== question.money || receipt.change !== question.money-checked.total) throw new Error('Invalid total');
+          return {level:receipt.level,issuedAt:receipt.issuedAt,items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total};
+        });
+        const available = products(QUESTIONS[saved.level-1]).map(product => product.name);
+        const basket = [...new Set(saved.basket)].filter(name => available.includes(name));
+        const cleared = [receipts.length >= 1,receipts.length >= 2,saved.phase === 'complete'];
+        return {version:1,level:saved.level,phase:saved.phase,basket:saved.phase === 'shopping' ? basket : [],cleared,receipts};
+      } catch (error) {
+        if (!(error instanceof SyntaxError) && error.message !== 'Invalid receipt' && error.message !== 'Invalid items' && error.message !== 'Invalid total') storageFailed = true;
+        return blankState();
+      }
+    }
+
+    function saveState() {
+      try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
+      catch (_) { storageFailed = true; }
+      $('#storage-notice').hidden = !storageFailed;
+    }
+
+    function updateHeader() {
+      const count = state.receipts.length;
+      $('#receipt-count').textContent = count;
+      $('#receipt-count').hidden = count === 0;
+      $('#open-receipts').setAttribute('aria-label',`レシート（${count}枚）`);
+      $('#storage-notice').hidden = !storageFailed;
+    }
+
+    function render() {
+      updateHeader();
+      main.className = '';
+      if (showTitle || state.phase === 'title') renderTitle();
+      else if (state.phase === 'shopping') renderShopping();
+      else if (state.phase === 'receipt') renderReceiptStep();
+      else renderComplete();
+    }
+
+    function shopArt() {
+      return '<svg class="shop-art" aria-hidden="true" viewBox="0 0 180 170" fill="none"><ellipse cx="90" cy="151" rx="69" ry="8" fill="#e3e8dc"/><path d="M33 72h114v72H33z" fill="#fffef9" stroke="currentColor" stroke-width="2"/><path d="M29 72h122l-9-31H38L29 72z" fill="#e2e9d9" stroke="currentColor" stroke-width="2"/><path d="M29 72c0 15 24 15 24 0 0 15 25 15 25 0 0 15 24 15 24 0 0 15 25 15 25 0 0 15 24 15 24 0M53 72l5-31M78 72l1-31M102 72l-1-31M127 72l-5-31" stroke="currentColor" stroke-width="2"/><path d="M46 100h40v27H46z" fill="#eaf0e7" stroke="currentColor" stroke-width="2"/><path d="M104 99h27v45h-27z" fill="#f0ebda" stroke="currentColor" stroke-width="2"/><path d="M66 100v27M121 120v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="63" y="14" width="54" height="22" rx="5" fill="#285d48"/><path d="M76 25h28" stroke="#fffef9" stroke-width="2" stroke-linecap="round"/><path d="M23 144h134" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    }
+
+    function renderTitle() {
+      const started = state.phase !== 'title';
+      main.innerHTML = `<section class="title-screen"><div class="title-content">${shopArt()}<div class="eyebrow">おつかいスーパー</div><h1>レジ</h1><p class="title-subtitle">頼まれたものを、カゴに入れてお会計。</p><button class="primary" type="button" data-action="start">${started ? 'つづきから' : 'おつかいを始める'}</button>${started ? '<button class="quiet" type="button" data-action="reset">最初からやり直す</button>' : ''}</div></section>`;
+    }
+
+    function renderShopping() {
+      const question = QUESTIONS[state.level-1];
+      const hiddenPrices = state.level === 3;
+      const selected = new Set(state.basket);
+      const items = products(question).filter(product => selected.has(product.name));
+      main.className = 'shopping';
+      main.innerHTML = `
+        <section class="mission" aria-labelledby="memo-heading">
+          <div class="mission-top"><span class="level-label">おつかい ${state.level}</span><span class="wallet">所持金<strong>${yen(question.money)}</strong></span></div>
+          <h1 id="memo-heading">おつかいメモ</h1><p class="memo-text">${escapeHTML(question.memo)}</p>
+        </section>
+        <section aria-labelledby="shelf-heading"><div class="shelf-heading"><h2 id="shelf-heading">商品棚</h2><span>タップしてカゴへ</span></div>
+          ${question.groups.map(group => `<section class="shelf-group ${group.style}" aria-label="${group.name}"><h3>${group.name}</h3><div class="product-grid${group.products.length === 2 ? ' two' : ''}">${group.products.map(product => `
+            <button type="button" class="product-card" data-product="${product.name}" aria-pressed="${selected.has(product.name)}">
+              <span class="package" aria-hidden="true"></span><span class="product-name">${product.name}</span>
+              ${hiddenPrices ? '<span class="price-tag missing" aria-label="値札なし">？？？</span>' : `<span class="price-tag">${product.price.toLocaleString('ja-JP')}<small>円</small></span>`}
+              <span class="selection-label"><span class="selection-dot" aria-hidden="true"></span>${selected.has(product.name) ? '選択中' : '入れる'}</span>
+            </button>`).join('')}</div></section>`).join('')}
+        </section>
+        <section class="basket" aria-labelledby="basket-heading"><div class="basket-title"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-2 11H5L3 9zM7 9l3-6M17 9l-3-6M9 13v3M15 13v3"/></svg><h2 id="basket-heading">買い物カゴ</h2><span>${items.length}点</span></div>
+          ${items.length ? `<ul class="basket-list">${items.map(product => `<li class="basket-item"><span class="basket-item-name">${product.name}</span>${hiddenPrices ? '' : `<span class="basket-price">${yen(product.price)}</span>`}<button type="button" class="remove-button" data-remove="${product.name}" aria-label="${product.name}をカゴから出す"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></svg></button></li>`).join('')}</ul>` : '<p class="basket-empty">カゴは空です</p>'}
+        </section>
+        <p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p>
+        <div class="checkout-dock"><div class="checkout-inner"><div><span class="checkout-caption">カゴ ${items.length}点</span><div class="checkout-total"><span class="total-label">合計</span>${hiddenPrices ? '？？？' : yen(items.reduce((sum,product) => sum+product.price,0))}</div></div><button class="primary" type="button" data-action="checkout">お会計する</button></div></div>`;
+    }
+
+    function receiptHTML(receipt) {
+      const date = new Date(receipt.issuedAt);
+      const pad = number => String(number).padStart(2,'0');
+      const dateText = `${date.getFullYear()}年${pad(date.getMonth()+1)}月${pad(date.getDate())}日　${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      return `<div class="receipt-wrap"><article class="receipt-paper" aria-label="${receipt.level}枚目のレシート"><div class="receipt-store">おつかいスーパー</div><div class="receipt-caption">お買上票</div><div class="receipt-date">${dateText}</div><div class="receipt-lines">${receipt.items.map(item => `<div class="receipt-row"><span>${item.name}</span><span>${yen(item.price)}</span></div>`).join('')}</div><div class="receipt-row receipt-total"><span>合計</span><span>${yen(receipt.total)}</span></div><div class="receipt-row"><span>お預り</span><span>${yen(receipt.paid)}</span></div><div class="receipt-row"><span>お釣り</span><span>${yen(receipt.change)}</span></div><p class="receipt-thanks">お買い上げありがとうございます<br>またお越しくださいませ</p></article></div>`;
+    }
+
+    function renderReceiptStep() {
+      const receipt = state.receipts.find(item => item.level === state.level);
+      main.innerHTML = `<section><div class="success-heading"><div class="success-mark">${checkmark}</div><h1 tabindex="-1">お会計できました</h1><p>レシートを受け取りました。</p></div>${receiptHTML(receipt)}<div class="interlude-actions"><button class="primary full-width" type="button" data-action="next">次のおつかいへ</button></div></section>`;
+    }
+
+    function renderComplete() {
+      main.innerHTML = `<section class="complete-screen"><div><div class="success-mark">${checkmark}</div><div class="eyebrow">お会計できました</div><h1 tabindex="-1">おつかい完了！</h1><p>お買い物、ありがとう。</p><button class="secondary" type="button" data-action="title">タイトルへ</button></div></section>`;
+    }
+
+    function toggleProduct(name, fromBasket=false) {
+      if (state.phase !== 'shopping') return;
+      const available = products(QUESTIONS[state.level-1]);
+      if (!available.some(product => product.name === name)) return;
+      const had = state.basket.includes(name);
+      state.basket = had ? state.basket.filter(item => item !== name) : [...state.basket,name];
+      saveState();
+      renderShopping();
+      $('#selection-announcement').textContent = `${name}をカゴ${had ? 'から出しました' : 'に入れました'}`;
+      const target = Array.from(main.querySelectorAll('[data-product]')).find(button => button.dataset.product === name);
+      if (target && !fromBasket) target.focus({preventScroll:true});
+      if (fromBasket) $('#basket-heading').setAttribute('tabindex','-1');
+      if (fromBasket) $('#basket-heading').focus({preventScroll:true});
+    }
+
+    function checkout() {
+      if (state.phase !== 'shopping') return;
+      const question = QUESTIONS[state.level-1];
+      const result = assess(question,state.basket);
+      if (!result.ok) {
+        const status = $('#checkout-status');
+        status.textContent = result.reason === 'items' ? 'おつかいメモの種類と数を確認してください。' : '予算内でお会計できませんでした。';
+        status.focus();
+        return;
+      }
+      state.cleared[state.level-1] = true;
+      if (state.level <= 2) {
+        state.receipts.push({level:state.level,issuedAt:new Date().toISOString(),items:result.items.map(item => ({...item})),total:result.total,paid:question.money,change:question.money-result.total});
+        viewedReceipt = state.level-1;
+        state.phase = 'receipt';
+      } else state.phase = 'complete';
+      state.basket = [];
+      saveState();
+      render();
+      window.scrollTo(0,0);
+      $('h1',main).focus({preventScroll:true});
+    }
+
+    function nextQuestion() {
+      if (state.phase !== 'receipt' || state.level > 2) return;
+      state.level += 1;
+      state.phase = 'shopping';
+      state.basket = [];
+      saveState();
+      render();
+      window.scrollTo(0,0);
+      $('#memo-heading').setAttribute('tabindex','-1');
+      $('#memo-heading').focus({preventScroll:true});
+    }
+
+    function resetGame() {
+      if (!window.confirm('最初からやり直しますか？\nおつかいの進み具合とレシートが消えます。')) return;
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_) { storageFailed = true; }
+      closeModal();
+      state = blankState();
+      showTitle = false;
+      viewedReceipt = null;
+      $('#selection-announcement').textContent = '';
+      render();
+      window.scrollTo(0,0);
+      $('[data-action="start"]',main).focus({preventScroll:true});
+    }
+
+    function openModal(id) {
+      if (modal) closeModal();
+      returnFocus = document.activeElement;
+      modal = $(id);
+      modal.hidden = false;
+      $('#app').inert = true;
+      $('#app').setAttribute('aria-hidden','true');
+      document.body.style.overflow = 'hidden';
+      $('[data-close-modal]',modal).focus({preventScroll:true});
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.hidden = true;
+      modal = null;
+      $('#app').inert = false;
+      $('#app').removeAttribute('aria-hidden');
+      document.body.style.overflow = '';
+      if (returnFocus && returnFocus.isConnected) returnFocus.focus({preventScroll:true});
+      returnFocus = null;
+    }
+
+    function renderReceiptModal() {
+      if (viewedReceipt === null || !state.receipts[viewedReceipt]) viewedReceipt = state.receipts.length-1;
+      $('#receipt-tabs').innerHTML = state.receipts.map((receipt,index) => `<button class="receipt-tab" type="button" data-receipt="${index}" aria-pressed="${index === viewedReceipt}">${index+1}枚目</button>`).join('');
+      $('#receipt-tabs').hidden = state.receipts.length === 0;
+      $('#receipt-content').innerHTML = state.receipts.length ? receiptHTML(state.receipts[viewedReceipt]) : '<p class="receipt-empty">レシートはまだありません。</p>';
+      $('#receipt-content').scrollTop = 0;
+    }
+
+    main.addEventListener('click', event => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      if (button.dataset.product) return toggleProduct(button.dataset.product);
+      if (button.dataset.remove) return toggleProduct(button.dataset.remove,true);
+      switch (button.dataset.action) {
+        case 'start': showTitle=false; if (state.phase === 'title') {state.phase='shopping';saveState();} render();window.scrollTo(0,0);break;
+        case 'checkout': checkout();break;
+        case 'next': nextQuestion();break;
+        case 'title': showTitle=true;render();window.scrollTo(0,0);break;
+        case 'reset': resetGame();break;
+      }
+    });
+    $('#open-receipts').addEventListener('click', () => {renderReceiptModal();openModal('#receipt-modal');});
+    $('#open-settings').addEventListener('click', () => openModal('#settings-modal'));
+    $('#receipt-tabs').addEventListener('click', event => {
+      const button = event.target.closest('[data-receipt]');
+      if (!button) return;
+      viewedReceipt = Number(button.dataset.receipt);
+      renderReceiptModal();
+      $(`[data-receipt="${viewedReceipt}"]`).focus({preventScroll:true});
+    });
+    $('#return-title').addEventListener('click', () => {closeModal();showTitle=true;render();window.scrollTo(0,0);});
+    $('#reset-game').addEventListener('click', resetGame);
+    document.querySelectorAll('.modal-layer').forEach(layer => layer.addEventListener('click', event => {
+      if (event.target === layer || event.target.closest('[data-close-modal]')) closeModal();
+    }));
+    document.addEventListener('keydown', event => {
+      if (!modal) return;
+      if (event.key === 'Escape') {event.preventDefault();closeModal();return;}
+      if (event.key !== 'Tab') return;
+      const buttons = Array.from(modal.querySelectorAll('button:not([disabled])')).filter(button => !button.closest('[hidden]'));
+      const first = buttons[0], last = buttons[buttons.length-1];
+      if (event.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) {event.preventDefault();last.focus();}
+      else if (!event.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {event.preventDefault();first.focus();}
+    });
+    window.addEventListener('pagehide', () => {if (state.phase !== 'title') saveState();});
+    render();
+  })();
+  </script>
+</body>
+</html>
