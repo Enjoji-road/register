@@ -274,7 +274,15 @@
     }
 
     function registeredName(name) {
-      return state.masterUnlocked && typeof state.registeredNames[name] === 'string' ? state.registeredNames[name].trim() : name;
+      return canRename(name) && typeof state.registeredNames[name] === 'string' ? state.registeredNames[name].trim() : name;
+    }
+
+    function canRename(name) {
+      return state.level === 4 && state.masterUnlocked && products(QUESTIONS[3]).some(product => product.name === name && product.aliases);
+    }
+
+    function canUnlockMaster() {
+      return state.level === 4 && !modal && !state.masterUnlocked && (showTitle || state.phase === 'title');
     }
 
     function assess(question, names, registrations={}) {
@@ -364,13 +372,13 @@
         if (!previousComplete && !replacedFourthQuestion && saved.version >= 3 && saved.entries && typeof saved.entries === 'object' && !Array.isArray(saved.entries)) {
           available.forEach(name => {if (typeof saved.entries[name] === 'string') entries[name] = saved.entries[name];});
         }
-        const masterUnlocked = !legacy && saved.masterUnlocked === true;
+        const masterUnlocked = level === 4 && !legacy && saved.masterUnlocked === true;
         const registeredNames = {};
         if (masterUnlocked && saved.registeredNames && typeof saved.registeredNames === 'object' && !Array.isArray(saved.registeredNames)) {
           available.forEach(name => {if (typeof saved.registeredNames[name] === 'string') registeredNames[name] = saved.registeredNames[name];});
         }
         const cleared = QUESTIONS.map((_,index) => receipts.length > index || (phase === 'complete' && index === 3));
-        if (legacy || saved.version === 4) legacyToBackup = raw;
+        if (legacy || saved.version === 4 || (level < 4 && saved.masterUnlocked === true)) legacyToBackup = raw;
         const active = ['shopping','register'].includes(phase);
         return {version:5,level,phase,basket:active ? basket : [],entries:active ? entries : {},registeredNames:active ? registeredNames : {},masterUnlocked,cleared,receipts};
       } catch (error) {
@@ -476,7 +484,7 @@
       main.innerHTML = `${missionHTML(question)}
         <section aria-labelledby="register-heading">
           <div class="register-heading"><h2 id="register-heading" tabindex="-1">セルフレジ</h2><button class="secondary" type="button" data-action="shelf">商品棚へ戻る</button></div>
-          <div class="access-panel"><span>登録名の訂正</span><span class="access-status${state.masterUnlocked ? ' active' : ''}">${state.masterUnlocked ? 'マスター権限：有効' : '🔒 マスター権限が必要です'}</span></div>
+          ${state.level === 4 ? `<div class="access-panel"><span>登録名の訂正</span><span class="access-status${state.masterUnlocked ? ' active' : ''}">${state.masterUnlocked ? 'マスター権限：有効' : '🔒 マスター権限が必要です'}</span></div>` : ''}
           <form id="register-form" novalidate autocomplete="off">
             <div class="register-list">${items.length ? items.map((product,index) => registerRowHTML(product,index,items.length)).join('') : '<p class="basket-empty">カゴは空です</p>'}</div>
             <p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p>
@@ -489,7 +497,7 @@
 
     function registerRowHTML(product,index,count) {
       const name = registeredName(product.name);
-      const nameHTML = state.masterUnlocked ? `<label class="name-label" for="name-${index}"><span class="sr-only">${product.name}の登録名</span><input class="name-input" id="name-${index}" data-name-entry="${product.name}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" value="${escapeHTML(name)}"></label>` : `<span class="register-name">${escapeHTML(name)}</span>`;
+      const nameHTML = canRename(product.name) ? `<label class="name-label" for="name-${index}"><span class="sr-only">${product.name}の登録名</span><input class="name-input" id="name-${index}" data-name-entry="${product.name}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" value="${escapeHTML(name)}"></label>` : `<span class="register-name">${escapeHTML(name)}</span>`;
       return `<div class="register-row"><div class="register-product">${nameHTML}<span class="register-tag">値札<strong>${state.level <= 2 ? yen(product.price) : '？？？円'}</strong></span></div><label class="amount-field" for="amount-${index}"><span class="sr-only">${product.name}の金額</span><input class="amount-input" id="amount-${index}" data-entry="${product.name}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="${index < count-1 ? 'next' : 'done'}" value="${escapeHTML(state.entries[product.name] || '')}"><span>円</span></label></div>`;
     }
 
@@ -643,12 +651,12 @@
 
     function startMasterHold(target,origin=null) {
       cancelMasterHold();
-      if (modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+      if (!canUnlockMaster()) return;
       holdTarget = target;holdOrigin = origin;
       target.classList.add('is-holding');
       holdTimer = window.setTimeout(() => {
         cancelMasterHold();
-        if (modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+        if (!canUnlockMaster()) return;
         state.masterUnlocked = true;
         saveState();updateHeader();showInformation('master');
       },3000);
@@ -678,7 +686,7 @@
     });
     main.addEventListener('input', event => {
       const nameInput = event.target.closest('[data-name-entry]');
-      if (nameInput && state.phase === 'register' && state.masterUnlocked && state.basket.includes(nameInput.dataset.nameEntry)) {
+      if (nameInput && state.phase === 'register' && canRename(nameInput.dataset.nameEntry) && state.basket.includes(nameInput.dataset.nameEntry)) {
         state.registeredNames[nameInput.dataset.nameEntry] = nameInput.value;
         saveState();$('#checkout-status').textContent = '';return;
       }
@@ -723,7 +731,7 @@
     document.addEventListener('pointerdown', event => {
       const target = event.target.closest('[data-master-switch]');
       if (!target || event.button !== 0 || event.isPrimary === false) {cancelMasterHold();return;}
-      if (modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+      if (!canUnlockMaster()) return;
       event.preventDefault();
       startMasterHold(target,{x:event.clientX,y:event.clientY,id:event.pointerId});
       try {target.setPointerCapture(event.pointerId);} catch (_) {}
@@ -738,7 +746,7 @@
     document.addEventListener('focusout', event => {if (event.target === holdTarget) cancelMasterHold();});
     document.addEventListener('keydown', event => {
       const target = event.target.closest('[data-master-switch]');
-      if (!target || ![' ','Enter'].includes(event.key) || modal || state.masterUnlocked || !(showTitle || state.phase === 'title')) return;
+      if (!target || ![' ','Enter'].includes(event.key) || !canUnlockMaster()) return;
       event.preventDefault();if (!event.repeat) startMasterHold(target);
     });
     document.addEventListener('keyup', event => {if ([' ','Enter'].includes(event.key)) cancelMasterHold();});
