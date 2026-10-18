@@ -178,14 +178,16 @@
           {name:'お茶',style:'tea',count:1,products:[{name:'小豆茶',price:380},{name:'玄米茶',price:400}]}] },
       { level:3, money:520, memo:'豆類を1つ、\nお茶を1つ買ってきてね。',
         groups:[{name:'豆類',style:'beans',count:1,products:[{name:'大豆',price:200},{name:'茶豆',price:320},{name:'青大豆',price:360}]},
-          {name:'お茶',style:'tea',count:1,products:[{name:'麦茶',price:320},{name:'小豆茶',price:380},{name:'大豆茶',price:380}]}] }
+          {name:'お茶',style:'tea',count:1,products:[{name:'麦茶',price:320},{name:'小豆茶',price:380},{name:'大豆茶',price:380}]}] },
+      { level:4, money:420, memo:'お茶を1袋買ってきてね。',
+        groups:[{name:'お茶',style:'tea',count:1,products:[{name:'番茶',price:420},{name:'煎茶',price:440},{name:'緑茶',price:460}]}] }
     ];
     const $ = (selector, root=document) => root.querySelector(selector);
     const main = $('#main');
     const yen = number => number.toLocaleString('ja-JP') + '円';
     const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const products = question => question.groups.flatMap(group => group.products);
-    const blankState = () => ({version:1,level:1,phase:'title',basket:[],cleared:[false,false,false],receipts:[]});
+    const blankState = () => ({version:2,level:1,phase:'title',basket:[],cleared:[false,false,false,false],receipts:[]});
     const checkmark = '<svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg>';
     let storageFailed = false;
     let modal = null;
@@ -209,25 +211,36 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return blankState();
         const saved = JSON.parse(raw);
-        if (saved.version !== 1 || ![1,2,3].includes(saved.level) || !['title','shopping','receipt','complete'].includes(saved.phase)) return blankState();
+        if (![1,2].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','receipt','complete'].includes(saved.phase)) return blankState();
         if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
-        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.level - 1;
+
+        // 以前の3問版の進捗を引き継ぐ。第3問をクリア済みなら第4問へ。
+        const legacy = saved.version === 1;
+        if (legacy && saved.phase === 'complete' && saved.level === 3) {
+          saved.receipts.push({level:3,issuedAt:new Date().toISOString(),items:[{name:'大豆',price:200},{name:'麦茶',price:320}],total:520,paid:520,change:0});
+          saved.level = 4;
+          saved.phase = 'shopping';
+          saved.basket = [];
+        }
+
+        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.phase === 'complete' ? 4 : saved.level - 1;
         if (saved.phase === 'title' && saved.level !== 1) return blankState();
-        if (saved.phase === 'receipt' && saved.level === 3) return blankState();
-        if (saved.phase === 'complete' && saved.level !== 3) return blankState();
+        if (saved.phase === 'complete' && saved.level !== 4) return blankState();
         if (saved.receipts.length !== expectedReceipts) return blankState();
-        const receipts = saved.receipts.map((receipt, index) => {
+        const receipts = saved.receipts.map((receipt,index) => {
           const question = QUESTIONS[index];
           if (!receipt || receipt.level !== index+1 || !Array.isArray(receipt.items) || !Number.isFinite(Date.parse(receipt.issuedAt))) throw new Error('Invalid receipt');
-          const checked = assess(question, receipt.items.map(item => item.name));
+          const checked = assess(question,receipt.items.map(item => item.name));
           if (!checked.ok || receipt.items.some(item => !checked.items.some(product => product.name === item.name && product.price === item.price))) throw new Error('Invalid items');
           if (receipt.total !== checked.total || receipt.paid !== question.money || receipt.change !== question.money-checked.total) throw new Error('Invalid total');
           return {level:receipt.level,issuedAt:receipt.issuedAt,items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total};
         });
         const available = products(QUESTIONS[saved.level-1]).map(product => product.name);
         const basket = [...new Set(saved.basket)].filter(name => available.includes(name));
-        const cleared = [receipts.length >= 1,receipts.length >= 2,saved.phase === 'complete'];
-        return {version:1,level:saved.level,phase:saved.phase,basket:saved.phase === 'shopping' ? basket : [],cleared,receipts};
+        const cleared = [receipts.length>=1,receipts.length>=2,receipts.length>=3,receipts.length>=4 || saved.phase==='complete'];
+        const result = {version:2,level:saved.level,phase:saved.phase,basket:saved.phase==='shopping'?basket:[],cleared,receipts};
+        if (legacy) try { localStorage.setItem(STORAGE_KEY,JSON.stringify(result)); } catch (_) {storageFailed=true;}
+        return result;
       } catch (error) {
         if (!(error instanceof SyntaxError) && error.message !== 'Invalid receipt' && error.message !== 'Invalid items' && error.message !== 'Invalid total') storageFailed = true;
         return blankState();
@@ -268,7 +281,7 @@
 
     function renderShopping() {
       const question = QUESTIONS[state.level-1];
-      const hiddenPrices = state.level === 3;
+      const hiddenPrices = state.level >= 3;
       const selected = new Set(state.basket);
       const items = products(question).filter(product => selected.has(product.name));
       main.className = 'shopping';
@@ -301,7 +314,7 @@
 
     function renderReceiptStep() {
       const receipt = state.receipts.find(item => item.level === state.level);
-      main.innerHTML = `<section><div class="success-heading"><div class="success-mark">${checkmark}</div><h1 tabindex="-1">お会計できました</h1><p>レシートを受け取りました。</p></div>${receiptHTML(receipt)}<div class="interlude-actions"><button class="primary full-width" type="button" data-action="next">次のおつかいへ</button></div></section>`;
+      main.innerHTML = `<section><div class="success-heading"><div class="success-mark">${checkmark}</div><h1 tabindex="-1">お会計できました</h1><p>レシートを受け取りました。</p></div>${receiptHTML(receipt)}<div class="interlude-actions"><button class="primary full-width" type="button" data-action="next">${state.level === 4 ? 'おつかい完了へ' : '次のおつかいへ'}</button></div></section>`;
     }
 
     function renderComplete() {
@@ -334,11 +347,9 @@
         return;
       }
       state.cleared[state.level-1] = true;
-      if (state.level <= 2) {
-        state.receipts.push({level:state.level,issuedAt:new Date().toISOString(),items:result.items.map(item => ({...item})),total:result.total,paid:question.money,change:question.money-result.total});
-        viewedReceipt = state.level-1;
-        state.phase = 'receipt';
-      } else state.phase = 'complete';
+      state.receipts.push({level:state.level,issuedAt:new Date().toISOString(),items:result.items.map(item => ({...item})),total:result.total,paid:question.money,change:question.money-result.total});
+      viewedReceipt = state.level-1;
+      state.phase = 'receipt';
       state.basket = [];
       saveState();
       render();
@@ -347,15 +358,16 @@
     }
 
     function nextQuestion() {
-      if (state.phase !== 'receipt' || state.level > 2) return;
-      state.level += 1;
-      state.phase = 'shopping';
+      if (state.phase !== 'receipt' || state.level > 4) return;
+      if (state.level === 4) state.phase = 'complete';
+      else { state.level += 1; state.phase = 'shopping'; }
       state.basket = [];
       saveState();
       render();
       window.scrollTo(0,0);
-      $('#memo-heading').setAttribute('tabindex','-1');
-      $('#memo-heading').focus({preventScroll:true});
+      const heading = $('#memo-heading') || $('h1',main);
+      heading.setAttribute('tabindex','-1');
+      heading.focus({preventScroll:true});
     }
 
     function resetGame() {
