@@ -211,36 +211,36 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return blankState();
         const saved = JSON.parse(raw);
-        if (![1,2].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','receipt','complete'].includes(saved.phase)) return blankState();
-        if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
-
-        // 以前の3問版の進捗を引き継ぐ。第3問をクリア済みなら第4問へ。
         const legacy = saved.version === 1;
-        if (legacy && saved.phase === 'complete' && saved.level === 3) {
-          saved.receipts.push({level:3,issuedAt:new Date().toISOString(),items:[{name:'大豆',price:200},{name:'麦茶',price:320}],total:520,paid:520,change:0});
-          saved.level = 4;
-          saved.phase = 'shopping';
-          saved.basket = [];
-        }
-
-        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.phase === 'complete' ? 4 : saved.level - 1;
+        if (![1,2].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','receipt','complete'].includes(saved.phase)) return blankState();
+        if (legacy && saved.level > 3) return blankState();
+        if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
+        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.phase === 'complete' && !legacy ? 4 : saved.level-1;
         if (saved.phase === 'title' && saved.level !== 1) return blankState();
-        if (saved.phase === 'complete' && saved.level !== 4) return blankState();
+        if (legacy && saved.phase === 'receipt' && saved.level === 3) return blankState();
+        if (saved.phase === 'complete' && saved.level !== (legacy ? 3 : 4)) return blankState();
         if (saved.receipts.length !== expectedReceipts) return blankState();
-        const receipts = saved.receipts.map((receipt,index) => {
+        const receipts = saved.receipts.map((receipt, index) => {
           const question = QUESTIONS[index];
           if (!receipt || receipt.level !== index+1 || !Array.isArray(receipt.items) || !Number.isFinite(Date.parse(receipt.issuedAt))) throw new Error('Invalid receipt');
-          const checked = assess(question,receipt.items.map(item => item.name));
+          const checked = assess(question, receipt.items.map(item => item.name));
           if (!checked.ok || receipt.items.some(item => !checked.items.some(product => product.name === item.name && product.price === item.price))) throw new Error('Invalid items');
           if (receipt.total !== checked.total || receipt.paid !== question.money || receipt.change !== question.money-checked.total) throw new Error('Invalid total');
           return {level:receipt.level,issuedAt:receipt.issuedAt,items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total};
         });
-        const available = products(QUESTIONS[saved.level-1]).map(product => product.name);
+        // 以前の3問版をクリア済みなら、3問目のレシートを補い4問目から続けられるようにする。
+        const previousComplete = legacy && saved.phase === 'complete';
+        if (previousComplete) {
+          const question = QUESTIONS[2];
+          const checked = assess(question,['大豆','麦茶']);
+          receipts.push({level:3,issuedAt:new Date().toISOString(),items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total});
+        }
+        const level = previousComplete ? 4 : saved.level;
+        const phase = previousComplete ? 'shopping' : saved.phase;
+        const available = products(QUESTIONS[level-1]).map(product => product.name);
         const basket = [...new Set(saved.basket)].filter(name => available.includes(name));
-        const cleared = [receipts.length>=1,receipts.length>=2,receipts.length>=3,receipts.length>=4 || saved.phase==='complete'];
-        const result = {version:2,level:saved.level,phase:saved.phase,basket:saved.phase==='shopping'?basket:[],cleared,receipts};
-        if (legacy) try { localStorage.setItem(STORAGE_KEY,JSON.stringify(result)); } catch (_) {storageFailed=true;}
-        return result;
+        const cleared = QUESTIONS.map((_,index) => receipts.length > index || (phase === 'complete' && index === 3));
+        return {version:2,level,phase,basket:phase === 'shopping' ? basket : [],cleared,receipts};
       } catch (error) {
         if (!(error instanceof SyntaxError) && error.message !== 'Invalid receipt' && error.message !== 'Invalid items' && error.message !== 'Invalid total') storageFailed = true;
         return blankState();
@@ -358,14 +358,18 @@
     }
 
     function nextQuestion() {
-      if (state.phase !== 'receipt' || state.level > 4) return;
-      if (state.level === 4) state.phase = 'complete';
-      else { state.level += 1; state.phase = 'shopping'; }
+      if (state.phase !== 'receipt') return;
+      if (state.level === QUESTIONS.length) {
+        state.phase = 'complete';
+      } else {
+        state.level += 1;
+        state.phase = 'shopping';
+      }
       state.basket = [];
       saveState();
       render();
       window.scrollTo(0,0);
-      const heading = $('#memo-heading') || $('h1',main);
+      const heading = state.phase === 'complete' ? $('h1',main) : $('#memo-heading');
       heading.setAttribute('tabindex','-1');
       heading.focus({preventScroll:true});
     }
