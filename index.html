@@ -14,6 +14,7 @@
     body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;font-size:16px;line-height:1.6}
     button{font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     button:focus-visible{outline:3px solid #b3742d;outline-offset:4px}
+    input:focus-visible{outline:3px solid #b3742d;outline-offset:3px}
     button{cursor:pointer}
     svg{display:block;flex-shrink:0}
     .site-header{height:var(--header);position:sticky;top:0;z-index:30;background:rgba(245,245,238,.97);border-bottom:1px solid var(--line)}
@@ -26,6 +27,7 @@
     .receipt-count{position:absolute;right:0;top:0;min-width:19px;height:19px;border:2px solid var(--bg);border-radius:12px;background:var(--green);color:white;font-size:10px;line-height:15px;text-align:center;font-weight:700}
     main{max-width:760px;min-height:calc(100svh - var(--header));margin:0 auto;padding:22px 20px 40px}
     main.shopping{padding-bottom:calc(144px + var(--safe))}
+    main.registering{padding-bottom:calc(36px + var(--safe))}
     .primary,.secondary,.quiet{min-height:48px;border-radius:12px;padding:11px 20px;font-weight:700;line-height:1.5}
     .primary{background:var(--green);color:white;border:1px solid var(--green);box-shadow:0 3px 0 rgba(18,56,37,.08)}
     .primary:hover{background:var(--green-dark)}
@@ -93,6 +95,23 @@
     .checkout-inner .primary{min-width:156px;min-height:52px}
     .checkout-status{color:#934d34;font-size:14px;font-weight:600;margin:14px 0 0;min-height:23px;scroll-margin-top:240px}
     .checkout-status:empty{display:none}
+    .operation-guide{font-size:14px;color:var(--muted);margin:-7px 0 23px;line-height:1.8}
+    .registering .mission{position:static}
+    .register-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+    .register-heading h2{font-size:20px;margin:0}
+    .register-heading .secondary{padding:10px 13px;font-size:13px}
+    .register-list{display:grid;gap:12px}
+    .register-row{display:grid;grid-template-columns:minmax(0,1fr) 146px;align-items:center;gap:12px;min-height:88px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:16px}
+    .register-name{font-size:19px;font-weight:700;word-break:keep-all}
+    .amount-field{display:flex;align-items:center;gap:8px;min-width:0}
+    .amount-input{width:100%;min-width:0;min-height:52px;border:1px solid #aabbaa;border-radius:9px;background:white;color:var(--ink);font:inherit;font-size:22px;font-variant-numeric:tabular-nums;text-align:right;padding:8px 11px;scroll-margin-top:90px;scroll-margin-bottom:120px}
+    .amount-field>span:last-child{font-size:13px;flex-shrink:0}
+    .registering .checkout-dock{position:static;margin-top:22px;padding:15px;border:1px solid var(--line);border-radius:13px;box-shadow:none}
+    .registering .checkout-inner{gap:10px}
+    .registering .checkout-inner .primary{min-width:140px;padding-left:13px;padding-right:13px}
+    .registering .checkout-total{font-size:20px}
+    .registering .checkout-caption{margin-bottom:3px}
+    .registering .checkout-status{scroll-margin-top:90px}
     .success-heading{text-align:center;margin:8px 0 27px}
     .success-mark{display:grid;place-items:center;border-radius:50%;width:48px;height:48px;background:var(--light);color:var(--green);margin:0 auto 12px}
     .success-heading h1{font-size:21px;margin:0 0 5px}
@@ -118,7 +137,7 @@
     .modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px 8px 22px;flex-shrink:0}
     .modal-header h2{font-size:17px;margin:0}
     .receipt-tabs{display:flex;gap:8px;padding:0 22px 16px;flex-shrink:0}
-    .receipt-tab{min-height:44px;flex:1;padding:8px 14px;background:transparent;border:1px solid #cbd6c5;border-radius:9px;font-size:13px}
+    .receipt-tab{min-height:44px;min-width:0;flex:1;padding:8px 10px;background:transparent;border:1px solid #cbd6c5;border-radius:9px;font-size:12px;white-space:nowrap}
     .receipt-tab[aria-pressed="true"]{background:var(--green);color:white;border-color:var(--green)}
     .modal-scroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:5px 22px 12px}
     .modal-scroll .receipt-wrap{margin-bottom:20px}
@@ -131,6 +150,7 @@
     @media(min-width:600px){main{padding-top:30px}.product-card{padding:22px 12px 15px}.package{width:49px;height:55px}.product-name{font-size:24px}.mission{padding:20px 24px}.memo-text{font-size:18px}.shelf-group{margin-bottom:27px}}
     @media(max-width:360px){.header-inner{padding:0 12px}.store-brand{font-size:13px;gap:6px}.store-symbol{width:27px;height:27px}main{padding-left:14px;padding-right:14px}.mission{padding:14px 15px}.memo-text{font-size:16px}.wallet{gap:5px}.wallet strong{font-size:17px}.product-grid{gap:8px}.product-card{padding-left:4px;padding-right:4px}.product-name{font-size:20px}.checkout-dock{padding-left:14px;padding-right:14px}.checkout-inner{gap:9px}.checkout-inner .primary{min-width:142px}.checkout-total{font-size:19px}.receipt-paper{padding:24px 18px}.receipt-store{font-size:16px}.modal-scroll{padding-left:16px;padding-right:16px}}
     @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+    @media(max-width:360px){.register-row{grid-template-columns:minmax(0,1fr) 132px;padding:14px;gap:9px}.register-name{font-size:18px}.registering .checkout-dock{padding:12px}.registering .checkout-total{font-size:18px}.registering .checkout-inner .primary{min-width:132px;font-size:14px}}
   </style>
 </head>
 <body>
@@ -169,6 +189,7 @@
   (() => {
     'use strict';
     const STORAGE_KEY = 'regi-r01-play-v1';
+    const LEGACY_BACKUP_KEY = 'regi-r01-before-selfcheckout';
     const QUESTIONS = [
       { level:1, money:500, memo:'青豆と小豆を1袋ずつ買ってきてね。',
         groups:[{name:'豆類',style:'beans',count:2,products:[{name:'青豆',price:300},{name:'小豆',price:200}]}] },
@@ -179,27 +200,30 @@
       { level:3, money:520, memo:'豆類を1つ、\nお茶を1つ買ってきてね。',
         groups:[{name:'豆類',style:'beans',count:1,products:[{name:'大豆',price:200},{name:'茶豆',price:320},{name:'青大豆',price:360}]},
           {name:'お茶',style:'tea',count:1,products:[{name:'麦茶',price:320},{name:'小豆茶',price:380},{name:'大豆茶',price:380}]}] },
-      { level:4, money:420, memo:'お茶を1袋買ってきてね。',
-        groups:[{name:'お茶',style:'tea',count:1,products:[{name:'番茶',price:420},{name:'煎茶',price:440},{name:'緑茶',price:460}]}] }
+      { level:4, money:1000, memo:'納豆と番茶を1つずつ買ってきてね。',
+        groups:[{name:'豆類',style:'beans',count:1,products:[{name:'納豆',price:340}]},
+          {name:'お茶',style:'tea',count:1,products:[{name:'番茶',price:420}]}] }
     ];
     const $ = (selector, root=document) => root.querySelector(selector);
     const main = $('#main');
     const yen = number => number.toLocaleString('ja-JP') + '円';
     const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const products = question => question.groups.flatMap(group => group.products);
-    const blankState = () => ({version:2,level:1,phase:'title',basket:[],cleared:[false,false,false,false],receipts:[]});
+    const blankState = () => ({version:3,level:1,phase:'title',basket:[],entries:{},cleared:[false,false,false,false],receipts:[]});
     const checkmark = '<svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg>';
     let storageFailed = false;
     let modal = null;
     let returnFocus = null;
     let viewedReceipt = null;
     let showTitle = false;
+    let legacyToBackup = null;
     let state = loadState();
 
     function assess(question, names) {
+      if (!Array.isArray(names)) return {ok:false};
       const available = products(question);
       const unique = new Set(names);
-      if (!Array.isArray(names) || unique.size !== names.length || names.some(name => !available.some(product => product.name === name))) return {ok:false,reason:'items'};
+      if (unique.size !== names.length || names.some(name => !available.some(product => product.name === name))) return {ok:false,reason:'items'};
       if (question.groups.some(group => group.products.filter(product => unique.has(product.name)).length !== group.count)) return {ok:false,reason:'items'};
       const items = available.filter(product => unique.has(product.name));
       const total = items.reduce((sum, product) => sum + product.price, 0);
@@ -211,36 +235,46 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return blankState();
         const saved = JSON.parse(raw);
-        const legacy = saved.version === 1;
-        if (![1,2].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','receipt','complete'].includes(saved.phase)) return blankState();
-        if (legacy && saved.level > 3) return blankState();
+        const oldThreeQuestions = saved.version === 1;
+        const legacy = saved.version === 1 || saved.version === 2;
+        if (![1,2,3].includes(saved.version) || ![1,2,3,4].includes(saved.level) || !['title','shopping','register','receipt','complete'].includes(saved.phase)) return blankState();
+        if (oldThreeQuestions && saved.level > 3) return blankState();
+        if (legacy && saved.phase === 'register') return blankState();
         if (!Array.isArray(saved.receipts) || !Array.isArray(saved.basket)) return blankState();
-        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.phase === 'complete' && !legacy ? 4 : saved.level-1;
+        const expectedReceipts = saved.phase === 'receipt' ? saved.level : saved.phase === 'complete' && !oldThreeQuestions ? 4 : saved.level-1;
         if (saved.phase === 'title' && saved.level !== 1) return blankState();
-        if (legacy && saved.phase === 'receipt' && saved.level === 3) return blankState();
-        if (saved.phase === 'complete' && saved.level !== (legacy ? 3 : 4)) return blankState();
+        if (oldThreeQuestions && saved.phase === 'receipt' && saved.level === 3) return blankState();
+        if (saved.phase === 'complete' && saved.level !== (oldThreeQuestions ? 3 : 4)) return blankState();
         if (saved.receipts.length !== expectedReceipts) return blankState();
         const receipts = saved.receipts.map((receipt, index) => {
-          const question = QUESTIONS[index];
           if (!receipt || receipt.level !== index+1 || !Array.isArray(receipt.items) || !Number.isFinite(Date.parse(receipt.issuedAt))) throw new Error('Invalid receipt');
+          const question = legacy && index === 3 ? {money:420,groups:[{count:1,products:[{name:'番茶',price:420}]}]} : QUESTIONS[index];
           const checked = assess(question, receipt.items.map(item => item.name));
           if (!checked.ok || receipt.items.some(item => !checked.items.some(product => product.name === item.name && product.price === item.price))) throw new Error('Invalid items');
           if (receipt.total !== checked.total || receipt.paid !== question.money || receipt.change !== question.money-checked.total) throw new Error('Invalid total');
           return {level:receipt.level,issuedAt:receipt.issuedAt,items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total};
         });
-        // 以前の3問版をクリア済みなら、3問目のレシートを補い4問目から続けられるようにする。
-        const previousComplete = legacy && saved.phase === 'complete';
+        // 旧3問版の完了記録から、購入済みの第3問のレシートを復元する。
+        const previousComplete = oldThreeQuestions && saved.phase === 'complete';
         if (previousComplete) {
           const question = QUESTIONS[2];
           const checked = assess(question,['大豆','麦茶']);
           receipts.push({level:3,issuedAt:new Date().toISOString(),items:checked.items.map(item => ({...item})),total:checked.total,paid:question.money,change:question.money-checked.total});
         }
+        // 旧第4問の購入記録も元データに退避し、新しいおつかいを開始する。
+        const replacedFourthQuestion = legacy && saved.level === 4;
+        if (replacedFourthQuestion) receipts.splice(3);
         const level = previousComplete ? 4 : saved.level;
-        const phase = previousComplete ? 'shopping' : saved.phase;
+        const phase = previousComplete || replacedFourthQuestion ? 'shopping' : saved.phase;
         const available = products(QUESTIONS[level-1]).map(product => product.name);
-        const basket = [...new Set(saved.basket)].filter(name => available.includes(name));
+        const basket = previousComplete || replacedFourthQuestion ? [] : [...new Set(saved.basket)].filter(name => available.includes(name));
+        const entries = {};
+        if (!legacy && saved.entries && typeof saved.entries === 'object' && !Array.isArray(saved.entries)) {
+          available.forEach(name => {if (typeof saved.entries[name] === 'string') entries[name] = saved.entries[name];});
+        }
         const cleared = QUESTIONS.map((_,index) => receipts.length > index || (phase === 'complete' && index === 3));
-        return {version:2,level,phase,basket:phase === 'shopping' ? basket : [],cleared,receipts};
+        if (legacy) legacyToBackup = raw;
+        return {version:3,level,phase,basket:['shopping','register'].includes(phase) ? basket : [],entries:['shopping','register'].includes(phase) ? entries : {},cleared,receipts};
       } catch (error) {
         if (!(error instanceof SyntaxError) && error.message !== 'Invalid receipt' && error.message !== 'Invalid items' && error.message !== 'Invalid total') storageFailed = true;
         return blankState();
@@ -248,7 +282,13 @@
     }
 
     function saveState() {
-      try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
+      try {
+        if (legacyToBackup !== null) {
+          if (localStorage.getItem(LEGACY_BACKUP_KEY) === null) localStorage.setItem(LEGACY_BACKUP_KEY,legacyToBackup);
+          legacyToBackup = null;
+        }
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+      }
       catch (_) { storageFailed = true; }
       $('#storage-notice').hidden = !storageFailed;
     }
@@ -266,6 +306,7 @@
       main.className = '';
       if (showTitle || state.phase === 'title') renderTitle();
       else if (state.phase === 'shopping') renderShopping();
+      else if (state.phase === 'register') renderRegister();
       else if (state.phase === 'receipt') renderReceiptStep();
       else renderComplete();
     }
@@ -286,10 +327,8 @@
       const items = products(question).filter(product => selected.has(product.name));
       main.className = 'shopping';
       main.innerHTML = `
-        <section class="mission" aria-labelledby="memo-heading">
-          <div class="mission-top"><span class="level-label">おつかい ${state.level}</span><span class="wallet">所持金<strong>${yen(question.money)}</strong></span></div>
-          <h1 id="memo-heading">おつかいメモ</h1><p class="memo-text">${escapeHTML(question.memo)}</p>
-        </section>
+        ${missionHTML(question)}
+        ${state.level === 1 ? '<p class="operation-guide">商品の値札を確認して、金額を登録してください。</p>' : ''}
         <section aria-labelledby="shelf-heading"><div class="shelf-heading"><h2 id="shelf-heading">商品棚</h2><span>タップしてカゴへ</span></div>
           ${question.groups.map(group => `<section class="shelf-group ${group.style}" aria-label="${group.name}"><h3>${group.name}</h3><div class="product-grid${group.products.length === 2 ? ' two' : ''}">${group.products.map(product => `
             <button type="button" class="product-card" data-product="${product.name}" aria-pressed="${selected.has(product.name)}">
@@ -302,7 +341,57 @@
           ${items.length ? `<ul class="basket-list">${items.map(product => `<li class="basket-item"><span class="basket-item-name">${product.name}</span>${hiddenPrices ? '' : `<span class="basket-price">${yen(product.price)}</span>`}<button type="button" class="remove-button" data-remove="${product.name}" aria-label="${product.name}をカゴから出す"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></svg></button></li>`).join('')}</ul>` : '<p class="basket-empty">カゴは空です</p>'}
         </section>
         <p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p>
-        <div class="checkout-dock"><div class="checkout-inner"><div><span class="checkout-caption">カゴ ${items.length}点</span><div class="checkout-total"><span class="total-label">合計</span>${hiddenPrices ? '？？？' : yen(items.reduce((sum,product) => sum+product.price,0))}</div></div><button class="primary" type="button" data-action="checkout">お会計する</button></div></div>`;
+        <div class="checkout-dock"><div class="checkout-inner"><div class="checkout-total"><span class="total-label">カゴ</span>${items.length}点</div><button class="primary" type="button" data-action="register">セルフレジへ</button></div></div>`;
+    }
+
+    function missionHTML(question) {
+      return `<section class="mission" aria-labelledby="memo-heading"><div class="mission-top"><span class="level-label">おつかい ${state.level}</span><span class="wallet">所持金<strong>${yen(question.money)}</strong></span></div><h1 id="memo-heading">おつかいメモ</h1><p class="memo-text">${escapeHTML(question.memo)}</p></section>`;
+    }
+
+    function parseAmount(raw) {
+      if (typeof raw !== 'string' || !/^[0-9]+$/.test(raw)) return null;
+      const amount = Number(raw);
+      return Number.isSafeInteger(amount) && amount > 0 ? amount : null;
+    }
+
+    function enteredTotal() {
+      let total = 0;
+      for (const name of state.basket) {
+        const raw = state.entries[name] || '';
+        if (raw === '') continue;
+        const amount = parseAmount(raw);
+        if (amount === null || !Number.isSafeInteger(total+amount)) return null;
+        total += amount;
+      }
+      return total;
+    }
+
+    function renderRegister() {
+      const question = QUESTIONS[state.level-1];
+      const items = products(question).filter(product => state.basket.includes(product.name));
+      main.className = 'registering';
+      main.innerHTML = `${missionHTML(question)}<section aria-labelledby="register-heading"><div class="register-heading"><h2 id="register-heading" tabindex="-1">セルフレジ</h2><button class="secondary" type="button" data-action="shelf">商品棚へ戻る</button></div><form id="register-form" novalidate autocomplete="off"><div class="register-list">${items.length ? items.map((product,index) => `<label class="register-row" for="amount-${index}"><span class="register-name">${product.name}</span><span class="amount-field"><span class="sr-only">金額</span><input class="amount-input" id="amount-${index}" data-entry="${product.name}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="${index < items.length-1 ? 'next' : 'done'}" value="${escapeHTML(state.entries[product.name] || '')}"><span>円</span></span></label>`).join('') : '<p class="basket-empty">カゴは空です</p>'}</div><p id="checkout-status" class="checkout-status" role="alert" tabindex="-1"></p><div class="checkout-dock"><div class="checkout-inner"><div><span class="checkout-caption">入力合計</span><output class="checkout-total" id="entered-total" for="${items.map((_,index) => 'amount-'+index).join(' ')}"></output></div><button class="primary" type="submit">登録して会計</button></div></div></form></section>`;
+      updateEnteredTotal();
+    }
+
+    function updateEnteredTotal() {
+      const total = enteredTotal();
+      $('#entered-total').textContent = total === null ? '—' : yen(total);
+    }
+
+    function goToRegister() {
+      if (state.phase !== 'shopping') return;
+      state.phase = 'register';
+      saveState();render();window.scrollTo(0,0);
+      $('#register-heading').focus({preventScroll:true});
+    }
+
+    function returnToShelf() {
+      if (state.phase !== 'register') return;
+      state.phase = 'shopping';
+      saveState();render();window.scrollTo(0,0);
+      $('#memo-heading').setAttribute('tabindex','-1');
+      $('#memo-heading').focus({preventScroll:true});
     }
 
     function receiptHTML(receipt) {
@@ -337,12 +426,12 @@
     }
 
     function checkout() {
-      if (state.phase !== 'shopping') return;
+      if (state.phase !== 'register') return;
       const question = QUESTIONS[state.level-1];
       const result = assess(question,state.basket);
-      if (!result.ok) {
+      if (!result.ok || result.items.some(product => parseAmount(state.entries[product.name]) !== product.price)) {
         const status = $('#checkout-status');
-        status.textContent = result.reason === 'items' ? 'おつかいメモの種類と数を確認してください。' : '予算内でお会計できませんでした。';
+        status.textContent = '登録内容を確認してください。';
         status.focus();
         return;
       }
@@ -351,6 +440,7 @@
       viewedReceipt = state.level-1;
       state.phase = 'receipt';
       state.basket = [];
+      state.entries = {};
       saveState();
       render();
       window.scrollTo(0,0);
@@ -366,6 +456,7 @@
         state.phase = 'shopping';
       }
       state.basket = [];
+      state.entries = {};
       saveState();
       render();
       window.scrollTo(0,0);
@@ -376,7 +467,8 @@
 
     function resetGame() {
       if (!window.confirm('最初からやり直しますか？\nおつかいの進み具合とレシートが消えます。')) return;
-      try { localStorage.removeItem(STORAGE_KEY); } catch (_) { storageFailed = true; }
+      try { localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_BACKUP_KEY); } catch (_) { storageFailed = true; }
+      legacyToBackup = null;
       closeModal();
       state = blankState();
       showTitle = false;
@@ -424,11 +516,30 @@
       if (button.dataset.remove) return toggleProduct(button.dataset.remove,true);
       switch (button.dataset.action) {
         case 'start': showTitle=false; if (state.phase === 'title') {state.phase='shopping';saveState();} render();window.scrollTo(0,0);break;
-        case 'checkout': checkout();break;
+        case 'register': goToRegister();break;
+        case 'shelf': returnToShelf();break;
         case 'next': nextQuestion();break;
         case 'title': showTitle=true;render();window.scrollTo(0,0);break;
         case 'reset': resetGame();break;
       }
+    });
+    main.addEventListener('input', event => {
+      const input = event.target.closest('[data-entry]');
+      if (!input || state.phase !== 'register' || !state.basket.includes(input.dataset.entry)) return;
+      state.entries[input.dataset.entry] = input.value;
+      saveState();updateEnteredTotal();
+      $('#checkout-status').textContent = '';
+    });
+    main.addEventListener('submit', event => {
+      if (event.target.id !== 'register-form') return;
+      event.preventDefault();checkout();
+    });
+    main.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' || !event.target.matches('[data-entry]')) return;
+      event.preventDefault();
+      const inputs = Array.from(main.querySelectorAll('[data-entry]'));
+      const next = inputs[inputs.indexOf(event.target)+1];
+      if (next) {next.focus();next.select();} else checkout();
     });
     $('#open-receipts').addEventListener('click', () => {renderReceiptModal();openModal('#receipt-modal');});
     $('#open-settings').addEventListener('click', () => openModal('#settings-modal'));
@@ -454,6 +565,7 @@
       else if (!event.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {event.preventDefault();first.focus();}
     });
     window.addEventListener('pagehide', () => {if (state.phase !== 'title') saveState();});
+    if (legacyToBackup !== null) saveState();
     render();
   })();
   </script>
